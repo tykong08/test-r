@@ -1,802 +1,967 @@
-# GazeHome Edge Device# 🏠 GazeHome Edge Device
+# 🏠 GazeHome Edge Device# 🏠 GazeHome Edge Device
 
 
 
-시선 추적 기반 스마트홈 제어 시스템의 Edge Device 구현체입니다. 신체적 장애가 있는 사용자를 위한 접근성 솔루션으로, 시선과 깜빡임만으로 스마트홈 디바이스를 제어할 수 있습니다.Web-based gaze tracking edge device for smart home control using eye gaze. This demo runs on Raspberry Pi or similar edge devices and provides a browser-based UI for:
+[![Python](https://img.shields.io/badge/Python-3.11-blue.svg)](https://www.python.org/)[![Python](https://img.shields.io/badge/Python-3.11-blue.svg)](https://www.python.org/)
 
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.104.1-green.svg)](https://fastapi.tiangolo.com/)[![FastAPI](https://img.shields.io/badge/FastAPI-0.104.1-green.svg)](https://fastapi.tiangolo.com/)
 
+[![OpenCV](https://img.shields.io/badge/OpenCV-4.8.1-red.svg)](https://opencv.org/)[![OpenCV](https://img.shields.io/badge/OpenCV-4.8.1-red.svg)](https://opencv.org/)
 
-## 🎯 주요 기능- **5-point gaze calibration**
+[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED.svg)](https://www.docker.com/)[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-- **Dwell-time based gaze clicking**
 
-- **시선 추적 (Gaze Tracking)**: dlib 기반 실시간 시선 위치 추적- **Smart device control via Gateway API**
 
-- **이중 클릭 모드**: - **AI-powered recommendations**
+> **시선 추적 기반 스마트홈 제어 시스템** - 눈동자의 움직임만으로 스마트홈을 제어하는 접근성 솔루션> **시선 추적 기반 스마트홈 제어 시스템** - 눈동자의 움직임만으로 스마트홈을 제어하는 접근성 솔루션
 
-  - Dwell Click: 일정 시간 응시로 클릭- **Real-time video feed with gaze overlay**
 
-  - Blink Click: 의도적인 깜빡임으로 클릭
 
-- **시선 보정 (Calibration)**: 5포인트 보정으로 정확도 향상## 🎯 Features
+GazeHome Edge Device는 신체적 장애가 있는 사용자를 위한 혁신적인 접근성 솔루션입니다. 시선과 깜빡임만으로 스마트홈 디바이스를 제어할 수 있으며, AI 기반 추천 시스템이 사용자의 의도를 분석하여 더욱 편리한 제어 경험을 제공합니다.GazeHome Edge Device는 신체적 장애가 있는 사용자를 위한 혁신적인 접근성 솔루션입니다. 시선과 깜빡임만으로 스마트홈 디바이스를 제어할 수 있으며, AI 기반 추천 시스템이 사용자의 의도를 분석하여 더욱 편리한 제어 경험을 제공합니다.
 
-- **실시간 웹 UI**: WebSocket 기반 실시간 시선 포인터 표시
 
-- **AI 추천 시스템**: AI 서비스와 연동한 스마트 제어 추천### ✅ Implemented Features
 
+---<p align="center">
 
+  <img src="https://via.placeholder.com/800x400?text=GazeHome+Demo+Screenshot" alt="GazeHome Demo" width="800"/>
 
-## 📁 프로젝트 구조1. **5-Point Calibration System**
+## ✨ 주요 기능</p>
 
-   - Top-left, top-right, center, bottom-left, bottom-right calibration points
 
-```   - Automatic sample collection with stability filtering
 
-edge/   - Affine transformation for accurate gaze mapping
+### 🎯 시선 추적 (Gaze Tracking)---
 
-├── app.py                      # FastAPI 메인 애플리케이션   - Persistent calibration storage (JSON)
+- **실시간 시선 위치 추적**: dlib 기반 68-point facial landmark 감지
 
-├── config.json                 # 설정 파일
+- **5-Point 보정 시스템**: 화면의 5개 포인트를 활용한 정밀 보정
 
-├── requirements.txt            # Python 의존성2. **Gaze Tracking with Dwell-Click**
+- **Affine 변환**: 보정 데이터를 활용한 정확한 스크린 좌표 매핑
 
-├── core/                       # 핵심 모듈   - Integration with existing `gaze_tracking` module
+- **지속성 보정 저장**: JSON 파일로 보정 데이터 저장 및 재사용---
 
-│   ├── config.py              # 설정 관리   - Configurable dwell time (default 0.8s)
 
-│   └── database.py            # 데이터베이스 (SQLite)   - Real-time gaze pointer visualization
 
-├── gaze/                       # 시선 추적 모듈   - AOI (Area of Interest) mapping to devices
+### 👆 이중 클릭 모드## ✨ 주요 기능
 
-│   ├── tracker.py             # GazeTracker (메인)
+- **Dwell Click (응시 클릭)**: 일정 시간(기본 0.8초) 응시로 클릭
 
-│   └── calibrator.py          # 시선 보정3. **Device Control**
+  - 실시간 진행도 표시 (파란 원)### 🎯 시선 추적 (Gaze Tracking)
 
-├── model/                      # ML 모델 (이전 gaze_tracking)   - Async HTTP client for Gateway API
+  - 조절 가능한 응시 시간 (0.3~2.0초)- **실시간 시선 위치 추적**: dlib 기반 68-point facial landmark 감지
 
-│   ├── gaze_tracking.py       # 시선 추적 라이브러리   - Device list/detail/status queries
+- **Blink Click (깜빡임 클릭)**: 의도적인 깜빡임(0.3~1.0초)으로 클릭- **5-Point 보정 시스템**: 화면의 5개 포인트를 활용한 정밀 보정
 
-│   ├── eye.py                 # 눈 감지   - Device control commands
+  - 자연스러운 깜빡임 필터링 (< 0.3초)- **Affine 변환**: 보정 데이터를 활용한 정확한 스크린 좌표 매핑
 
-│   ├── pupil.py               # 동공 감지   - Periodic and manual state refresh
+  - 눈 감은 시간 추적 및 검증- **지속성 보정 저장**: JSON 파일로 보정 데이터 저장 및 재사용
 
-│   └── calibration.py         # 보정 알고리즘
 
-├── services/                   # 외부 서비스 연동4. **AI Recommendations**
 
-│   ├── ai_service.py          # AI 서비스 클라이언트   - Polling-based recommendation fetching
+### 🤖 AI 추천 시스템### 👆 이중 클릭 모드
 
-│   └── device_manager.py      # 디바이스 관리   - YES/NO response handling
+- **컨텍스트 인식**: 시간, 날씨, 디바이스 상태 분석- **Dwell Click (응시 클릭)**: 일정 시간(기본 0.8초) 응시로 클릭
 
-├── templates/                  # HTML 템플릿   - Automatic control execution on YES
+- **자동 제어 제안**: AI가 사용자 의도를 분석하여 추천  - 실시간 진행도 표시 (파란 원)
 
-│   └── index.html             # 메인 UI   - Real-time popup notifications
+- **YES/NO 응답**: 간단한 응답으로 추천 수락/거부  - 조절 가능한 응시 시간 (0.3~2.0초)
 
-└── static/                     # 정적 파일
+- **실시간 알림**: 팝업 다이얼로그로 추천 표시- **Blink Click (깜빡임 클릭)**: 의도적인 깜빡임(0.3~1.0초)으로 클릭
 
-    ├── app.js                 # 프론트엔드 로직5. **Web UI**
+  - 자연스러운 깜빡임 필터링 (< 0.3초)
 
-    └── style.css              # 스타일시트   - FastAPI backend with WebSocket support
+### 🌐 실시간 웹 UI  - 눈 감은 시간 추적 및 검증
 
-```   - Real-time video streaming
+- **WebSocket 기반**: 실시간 양방향 통신
 
-   - Interactive calibration interface
+- **비디오 스트리밍**: 카메라 영상 오버레이 표시### 🤖 AI 추천 시스템
 
-## 🚀 빠른 시작   - Device cards with status display
+- **시선 포인터**: 녹색 그라데이션 포인터로 시선 위치 시각화- **컨텍스트 인식**: 시간, 날씨, 디바이스 상태 분석
 
-   - Recommendation popup dialogs
+- **디바이스 카드**: 스마트 디바이스 상태 및 제어 UI- **자동 제어 제안**: AI가 사용자 의도를 분석하여 추천
 
-### 1. 환경 설정
+- **반응형 디자인**: 다양한 화면 크기 지원- **YES/NO 응답**: 간단한 응답으로 추천 수락/거부
 
-## 📋 Prerequisites
+- **실시간 알림**: 팝업 다이얼로그로 추천 표시
 
-```bash
+### 🔌 Gateway 연동
 
-# Conda 환경 생성 및 활성화- Python 3.8+
+- **비동기 HTTP 클라이언트**: aiohttp 기반 효율적인 통신### � 실시간 웹 UI
 
-conda create -n gaze python=3.11- Webcam/Camera
+- **디바이스 관리**: 목록 조회, 상태 확인, 제어 명령 전송- **WebSocket 기반**: 실시간 양방향 통신
 
-conda activate gaze- Gateway server running (port 8001)
+- **주기적 상태 갱신**: 5초마다 자동 상태 업데이트- **비디오 스트리밍**: 카메라 영상 오버레이 표시
 
-- AI Service running (port 8000)
+- **Mock 모드**: 테스트를 위한 가상 디바이스 지원- **시선 포인터**: 녹색 그라데이션 포인터로 시선 위치 시각화
 
-# 의존성 설치
+- **디바이스 카드**: 스마트 디바이스 상태 및 제어 UI
 
-cd edge### System Requirements
+---- **반응형 디자인**: 다양한 화면 크기 지원
 
-pip install -r requirements.txt
 
-``````bash
 
-# macOS
-
-### 2. 설정 파일 수정brew install cmake
-
-
-
-`config.json`:# Ubuntu/Debian
-
-```jsonsudo apt-get install build-essential cmake
-
-{sudo apt-get install libopenblas-dev liblapack-dev
-
-    "user_uuid": "your-uuid-here",sudo apt-get install libx11-dev libgtk-3-dev
-
-    "ai_service_url": "http://localhost:8001",
-
-    "mock_mode": true,  // 테스트용: true, 프로덕션: false# Raspberry Pi
-
-    "gaze": {sudo apt-get install python3-opencv
-
-        "dwell_time": 0.8,sudo apt-get install libatlas-base-dev
-
-        "screen_width": 1920,```
-
-        "screen_height": 1080,
-
-        "camera_index": 0## 🚀 Quick Start
-
-    }
-
-}### 1. Setup
-
+## 📁 프로젝트 구조### � Gateway 연동
+
+- **비동기 HTTP 클라이언트**: aiohttp 기반 효율적인 통신
+
+```- **디바이스 관리**: 목록 조회, 상태 확인, 제어 명령 전송
+
+GazeTracking-master/- **주기적 상태 갱신**: 5초마다 자동 상태 업데이트
+
+├── 📄 Dockerfile                    # Docker 컨테이너 설정 (Raspberry Pi 지원)- **Mock 모드**: 테스트를 위한 가상 디바이스 지원
+
+├── 📄 docker-compose.yml            # Docker Compose 오케스트레이션
+
+├── 📄 run_raspberry_pi.sh           # 라즈베리파이 배포 스크립트---
+
+├── 📄 requirements.txt              # Python 의존성 (통합)
+├── 📄 .gitignore                    # Git 제외 파일
+├── 📄 README.md                     # 프로젝트 문서
+│
+├── 📁 edge/                         # Edge Device 메인 애플리케이션
+│   ├── 📄 app.py                   # FastAPI 메인 서버
+│   ├── 📄 config.json              # 런타임 설정
+│   │
+│   ├── 📁 core/                    # 핵심 모듈
+│   │   ├── config.py              # 설정 관리자
+│   │   └── database.py            # SQLite 데이터베이스
+│   │
+│   ├── 📁 gaze/                    # 시선 추적 모듈
+│   │   ├── tracker.py             # GazeTracker 메인 로직
+│   │   └── calibrator.py          # 5-point 보정 시스템
+│   │
+│   ├── 📁 model/                   # 시선 추적 ML 모델
+│   │   ├── gaze_tracking.py       # dlib 기반 추적 라이브러리
+│   │   ├── eye.py                 # 눈 감지 알고리즘
+│   │   ├── pupil.py               # 동공 위치 감지
+│   │   ├── calibration.py         # 보정 변환 알고리즘
+│   │   └── trained_models/
+│   │       └── shape_predictor_68_face_landmarks.dat
+│   │
+│   ├── 📁 services/                # 외부 서비스 클라이언트
+│   │   ├── ai_service.py          # AI 서비스 HTTP 클라이언트
+│   │   └── device_manager.py      # 디바이스 상태 관리
+│   │
+│   ├── 📁 templates/               # 웹 UI 템플릿
+│   │   └── index.html             # 메인 SPA
+│   │
+│   └── 📁 static/                  # 정적 파일
+│       ├── app.js                 # 프론트엔드 로직
+│       └── style.css              # 스타일시트
+│
+├── 📁 ai-services-main/            # AI 추천 서비스 (별도 프로젝트)
+└── 📁 gateway-main/                # Gateway 서비스 (별도 프로젝트)
 ```
-
-```bash
-
-### 3. 서버 실행cd edge
-
-chmod +x setup.sh
-
-```bash./setup.sh
-
-python app.py```
-
-```
-
-Or manually:
-
-브라우저에서 `http://localhost:8000` 접속
-
-```bash
-
-## 🎮 사용 방법# Create virtual environment
-
-python3 -m venv venv
-
-### 시선 보정source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-
-
-1. "시선 보정 시작" 버튼 클릭# Install dependencies
-
-2. 화면에 나타나는 빨간 점을 응시pip install -r requirements.txt
-
-3. 5개 포인트 × 30샘플 수집```
-
-4. 보정 완료 후 자동으로 저장
-
-### 2. Download dlib Model
-
-**보정 팁:**
-
-- 얼굴을 화면 중앙에 위치Download the facial landmarks model:
-
-- 충분한 조명 확보 (정면 조명 권장)
-
-- 카메라와 40-60cm 거리 유지```bash
-
-cd ../gaze_tracking/trained_models/
-
-### 클릭 모드wget http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2
-
-bunzip2 shape_predictor_68_face_landmarks.dat.bz2
-
-#### Dwell Click (응시 클릭)```
-
-- 대상을 0.8초 이상 응시
-
-- 진행 상황이 파란 원으로 표시### 3. Configure
-
-- 시간 완료 시 자동 클릭
-
-Edit `config.json`:
-
-#### Blink Click (깜빡임 클릭)
-
-- 0.3~1.0초 사이의 의도적 깜빡임```json
-
-- 자연스러운 깜빡임은 무시 (< 0.3초){
-
-  "user_uuid": "8f6b3c54-7b3b-4d4c-9e5d-2e8b1c1d4f99",
-
-**민감도 조정:**  "ai_service_url": "http://localhost:8001",
-
-보정 화면에서 "응시 민감도" 슬라이더로 조정 가능 (0.3~2.0초)  "mock_mode": false,
-
-  "gaze": {
-
-## 🔌 API 문서    "dwell_time": 0.8,
-
-    "screen_width": 1920,
-
-### REST API    "screen_height": 1080,
-
-    "camera_index": 0
-
-#### 1. 상태 조회  }
-
-```http}
-
-GET /api/state```
-
-```
-
-### 4. Run
-
-**Response:**
-
-```json**Option 1: Mock Mode (UI testing without servers)**
-
-{```bash
-
-  "user_uuid": "8f6b3c54-...",# Set mock_mode: true in config.json
-
-  "calibrated": true,python app.py
-
-  "devices": [```
-
-    {
-
-      "device_id": "ac_living_room",**Option 2: Real Mode (with AI Service)**
-
-      "name": "거실 에어컨",```bash
-
-      "device_type": "air_conditioner",# Make sure AI Service is running first!
-
-      "current_state": {# AI Service will communicate with Gateway
-
-        "is_on": true,
-
-        "temperature": 24# Start edge device
-
-      }python app.py
-
-    }```
-
-  ],
-
-  "recommendation": nullOpen browser: **http://localhost:8000**
-
-}
-
-```## 📖 Usage Guide
-
-
-
-#### 2. 디바이스 제어### First-Time Setup: Calibration
-
-```http
-
-POST /api/devices/{device_id}/control1. Click **"시선 보정 시작"** button
-
-Content-Type: application/json2. Look at each red target point for 2-3 seconds
-
-3. The system will automatically collect samples and move to the next target
-
-{4. After all 5 points, calibration is complete and saved
-
-  "action": "toggle",  // or "turn_on", "turn_off", "set_temperature"5. Calibration persists across sessions in `calibration_params.json`
-
-  "parameters": {      // 선택적
-
-    "temperature": 24### Controlling Devices
-
-  }
-
-}**Method 1: Gaze Click (Primary)**
-
-```1. Look at a device card
-
-2. Hold your gaze steady for ~0.8 seconds
-
-#### 3. 시선 보정3. A dwell indicator will grow around your gaze point
-
-4. Click is triggered automatically
-
-**보정 시작:**5. AI service analyzes intent and shows recommendation
-
-```http6. Choose YES or NO
-
-POST /api/calibration/start
-
-```**Method 2: Manual Click (Fallback)**
-
-- Click on device cards with mouse/touch
-
-**샘플 추가:**
-
-```http### Viewing Device Status
-
-POST /api/calibration/sample
-
-```- Device cards show real-time status
-
-- Green indicator = ON
-
-**다음 타겟으로 이동:**- Gray indicator = OFF
-
-```http- Cards update automatically every 5 seconds
-
-POST /api/calibration/next
-
-```### AI Recommendations
-
-
-
-**진행 상황 조회:**When you gaze-click a device:
-
-```http1. AI analyzes your intent based on:
-
-GET /api/calibration/progress   - Device current state
-
-```   - Time of day
-
-   - Weather (via MCP)
-
-**Response:**   - Historical patterns
-
-```json2. Shows recommendation popup
-
-{3. Click YES to execute or NO to dismiss
-
-  "is_complete": false,
-
-  "current_target": 0,## 🏗️ Architecture
-
-  "total_targets": 5,
-
-  "current_samples": 15,```
-
-  "required_samples": 30,edge/
-
-  "target_position": [960, 540]├── app.py                 # Main FastAPI server
-
-}├── config.json           # Configuration
-
-```├── requirements.txt      # Python dependencies
-
-├── setup.sh             # Setup script
-
-#### 4. 응시 시간 설정├── test_edge.py         # Test suite
-
-```http│
-
-POST /api/dwell-time├── core/
-
-Content-Type: application/json│   ├── __init__.py
-
-│   └── config.py        # Configuration manager
-
-{│
-
-  "dwell_time": 0.8├── gaze/
-
-}│   ├── __init__.py
-
-```│   ├── calibrator.py    # 5-point calibration
-
-│   └── tracker.py       # Gaze tracking + dwell-click
-
-### WebSocket API│
-
-├── api/
-
-```javascript│   ├── __init__.py
-
-const ws = new WebSocket('ws://localhost:8000/ws');│   ├── gateway_client.py   # Gateway API client
-
-│   └── ai_client.py        # AI Service API client
-
-ws.onmessage = (event) => {│
-
-  const data = JSON.parse(event.data);├── templates/
-
-  │   └── index.html          # Main web UI
-
-  switch(data.type) {│
-
-    case 'gaze':└── static/
-
-      // 시선 위치 업데이트    ├── style.css          # Styles
-
-      console.log(data.position); // {x: 960, y: 540}    └── app.js             # Frontend JavaScript
-
-      break;```
-
-      
-
-    case 'click':## 🔌 API Integration
-
-      // 클릭 이벤트
-
-      console.log(data.device_id);### Gateway API (Port 8001)
-
-      console.log(data.method); // 'dwell' or 'blink'
-
-      break;**Get Devices**
-
-      ```http
-
-    case 'dwell':GET /v1/devices
-
-      // Dwell 진행도```
-
-      console.log(data.progress); // 0.0 ~ 1.0
-
-      break;**Control Device**
-
-      ```http
-
-    case 'state':POST /v1/devices/{device_id}/control
-
-      // 시스템 상태 업데이트Content-Type: application/json
-
-      console.log(data.devices);
-
-      break;{
-
-  }  "user_uuid": "8f6b3c54-7b3b-4d4c-9e5d-2e8b1c1d4f99",
-
-};  "action": "toggle",
-
-```  "parameters": {}
-
-}
-
-## 🤖 AI 서비스 연동```
-
-
-
-### AI Service API### AI Service API (Port 8000)
-
-
-
-Edge Device는 별도의 AI Service와 통신합니다:**Send Device Click**
-
-```http
-
-**추천 요청:**POST /api/gaze/click
-
-```httpContent-Type: application/json
-
-POST http://localhost:8001/api/recommendations
-
-Content-Type: application/json{
-
-  "user_id": "8f6b3c54-7b3b-4d4c-9e5d-2e8b1c1d4f99",
-
-{  "session_id": "session_123",
-
-  "user_uuid": "8f6b3c54-...",  "clicked_device": {
-
-  "context": {    "device_id": "ac_01",
-
-    "time": "2024-01-01T14:30:00",    "device_type": "air_conditioner",
-
-    "devices": [...]    "device_name": "거실 에어컨",
-
-  }    "display_name": "에어컨",
-
-}    "capabilities": ["on_off", "temperature"],
-
-```    "current_state": {"is_on": false, "temperature": 24}
-
-  }
-
-**디바이스 제어 전송:**}
-
-```http```
-
-POST http://localhost:8001/api/device-control
-
-Content-Type: application/json**Poll Recommendations**
-
-```http
-
-{GET /v1/intent?user_uuid=8f6b3c54-7b3b-4d4c-9e5d-2e8b1c1d4f99
-
-  "user_uuid": "8f6b3c54-...",```
-
-  "device_id": "ac_living_room",
-
-  "action": "turn_on",**Respond to Recommendation**
-
-  "method": "gaze_blink"```http
-
-}POST /v1/intent
-
-```Content-Type: application/json
-
-
-
-## 🌉 Gateway 연동{
-
-  "user_uuid": "8f6b3c54-7b3b-4d4c-9e5d-2e8b1c1d4f99",
-
-Gateway와의 통신은 AI Service를 통해 이루어집니다:  "recommendation_id": "rec_123",
-
-  "answer": "YES"
-
-```}
-
-Edge Device -> AI Service -> Gateway -> Smart Device```
-
-```
-
-## ⚙️ Configuration Reference
-
-**Mock 모드:**
-
-- `mock_mode: true`: 가상 디바이스로 테스트| Parameter                         | Description                               | Default                                  |
-
-- `mock_mode: false`: 실제 Gateway 연동| --------------------------------- | ----------------------------------------- | ---------------------------------------- |
-
-| `user_uuid`                       | Single user identifier for all operations | `"8f6b3c54-7b3b-4d4c-9e5d-2e8b1c1d4f99"` |
-
-## 🖥️ UI 구성| `ai_service_url`                  | AI service URL                            | `"http://localhost:8001"`                |
-
-| `mock_mode`                       | Enable mock mode for UI testing           | `false`                                  |
-
-### 메인 화면| `gaze.dwell_time`                 | Dwell time for click (seconds)            | `0.8`                                    |
-
-| `gaze.screen_width`               | Screen width (pixels)                     | `1920`                                   |
-
-- **헤더**: 보정 상태, 연결 상태| `gaze.screen_height`              | Screen height (pixels)                    | `1080`                                   |
-
-- **시선 포인터**: 전체 화면에 녹색 포인터 표시| `gaze.camera_index`               | Camera device index                       | `0`                                      |
-
-- **Dwell 진행도**: 응시 중인 대상에 파란 원 표시| `polling.device_status_interval`  | Device status refresh interval (seconds)  | `5.0`                                    |
-
-- **제어 패널**: 보정 시작, 기기 새로고침| `polling.recommendation_interval` | Recommendation poll interval (seconds)    | `3.0`                                    |
-
-- **디바이스 그리드**: 연결된 스마트 디바이스 카드
-
-## 🧪 Testing
-
-### 보정 화면
-
-**Unit Tests:**
-
-- **타겟 포인트**: 빨간 점 (5개 위치)```bash
-
-- **웹캠 프리뷰**: 우측 하단에 얼굴 확인용python test_edge.py
-
-- **진행 바**: 현재 포인트 및 샘플 수```
-
-- **민감도 조정**: 응시 시간 슬라이더
-
-**Mock Mode UI Testing:**
-
-## 🔧 문제 해결See [MOCK_MODE_TESTING.md](./MOCK_MODE_TESTING.md) or [QUICK_START_MOCK.md](./QUICK_START_MOCK.md)
-
-
-
-### 카메라가 열리지 않음Tests include:
-
-```bash- Configuration loading
-
-# 카메라 인덱스 확인- Calibration system
-
-python -c "import cv2; print([i for i in range(5) if cv2.VideoCapture(i).isOpened()])"- API client connectivity
-
-- Gateway health check
-
-# config.json에서 camera_index 수정- AI service health check
-
-```
-
-## 🐛 Troubleshooting
-
-### 동공 감지 안 됨 (pupils_detected=False)
-
-- 조명을 밝게 조정### Camera not detected
-
-- 얼굴을 화면 정면에 위치```bash
-
-- 카메라와의 거리 조정 (40-60cm)# List available cameras
-
-- 안경이 빛을 반사하는 경우 각도 조정ls /dev/video*
-
-
-
-### WebSocket 연결 끊김# Test camera
-
-```bashpython -c "import cv2; print(cv2.VideoCapture(0).isOpened())"
-
-# uvicorn[standard] 재설치```
-
-pip install --upgrade 'uvicorn[standard]'
-
-```### dlib installation fails
-
-```bash
-
-### import 오류# macOS
-
-```bashbrew install cmake
-
-# 경로 확인pip install dlib
-
-echo $PYTHONPATH
-
-# Ubuntu
-
-# 환경 재설정sudo apt-get install cmake libboost-all-dev
-
-cd edgepip install dlib
-
-export PYTHONPATH="${PYTHONPATH}:$(pwd)"```
-
-python app.py
-
-```### Gateway/AI Service not responding
-
-- Check servers are running: `http://localhost:8001/health`, `http://localhost:8000/health`
-
-## 📊 성능 최적화- Verify URLs in `config.json`
-
-- Check firewall settings
-
-### 프레임 레이트
-
-- 권장: 30 FPS### Calibration inaccurate
-
-- config에서 조정 가능- Ensure good lighting
-
-- 낮은 사양에서는 15 FPS로 감소- Keep head still during calibration
-
-- Recalibrate if needed (click "시선 보정 시작" again)
-
-### 메모리 사용량- Adjust `stability_threshold` in `gaze/calibrator.py`
-
-- 기본: ~500MB
-
-- dlib 모델 로딩: ~100MB## 📊 Performance Optimization
-
-- 웹캠 버퍼: ~50MB
-
-### For Raspberry Pi
-
-## 🔒 보안
-
-1. **Reduce video resolution**
-
-- HTTPS 지원 (프로덕션 환경)```python
-
-- UUID 기반 사용자 인증# In app.py, before camera.read()
-
-- AI Service와 토큰 기반 통신camera.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-
-camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
-
-## 📝 로그```
-
-
-
-로그 레벨 설정:2. **Increase polling intervals**
-
-```python```json
-
-# app.py{
-
-logging.basicConfig(level=logging.INFO)  # DEBUG, INFO, WARNING, ERROR  "polling": {
-
-```    "device_status_interval": 10.0,
-
-    "recommendation_interval": 5.0
-
-주요 로그:  }
-
-- `Camera Status: OPEN` - 카메라 정상 작동}
-
-- `Gaze result: position=(x, y), pupils_detected=True` - 시선 추적 성공```
-
-- `Blink click detected: 0.45s` - 깜빡임 클릭 감지
-
-- `Click detected (dwell): device_id at (x, y)` - 응시 클릭 감지3. **Use hardware acceleration** (if available)
-
-```bash
-
-## 🧪 테스트# Enable OpenCL for Raspberry Pi
-
-sudo apt-get install ocl-icd-libopencl1
-
-### 브랜치별 모드```
-
-
-
-- **main**: 프로덕션 모드 (`mock_mode: false`)## 🔒 Security Considerations
-
-- **test**: 개발/테스트 모드 (`mock_mode: true`)
-
-⚠️ **This is a demo implementation**
-
-```bash
-
-# 테스트 브랜치로 전환For production:
-
-git checkout test- Add authentication (JWT tokens)
-
-- Use HTTPS for API calls
-
-# 프로덕션 브랜치로 전환- Encrypt calibration data
-
-git checkout main- Implement rate limiting
-
-```- Add CORS restrictions
-
-- Secure WebSocket connections
-
-## 🤝 기여
-
-## 📝 Data Flow
-
-이슈 및 Pull Request 환영합니다!
-
-```
-
-## 📄 라이선스1. Camera → Gaze Tracking → Calibration Transform → Screen Coordinates
-
-2. Screen Coordinates → Dwell Detection → Click Event
-
-이 프로젝트는 접근성 향상을 목표로 개발되었습니다.3. Click Event → AOI Mapping → Device ID + Action
-
-4. Device Info → AI Service → Intent Analysis → Recommendation
-
-## 📞 문의5. Recommendation → User (YES/NO) → AI Service Response
-
-6. YES → Gateway Control → Device State Update → UI Refresh
-
-문제가 발생하면 GitHub Issues에 등록해주세요.```
-
-
-
----## 🎓 Future Enhancements
-
-
-
-**개발 환경:**- [ ] WebSocket for real-time recommendations (replace polling)
-
-- Python 3.11- [ ] Multi-user support with face recognition
-
-- FastAPI 0.104- [ ] Voice confirmation for recommendations
-
-- OpenCV 4.8- [ ] Gesture-based commands (blink, nod)
-
-- dlib 19.24- [ ] Offline mode with cached recommendations
-
-- WebSocket (uvicorn[standard])- [ ] Progressive Web App (PWA) for mobile
-
-- [ ] Analytics dashboard
-
-**테스트 환경:**- [ ] Custom AOI editor
-
-- macOS / Raspberry Pi OS
-
-- 웹캠: 내장 카메라 or USB 카메라## 📄 License
-
-- 브라우저: Chrome, Firefox, Safari (최신 버전)
-
-See main project LICENSE file.
-
-## 🙏 Credits
-
-- **GazeTracking**: Base gaze tracking library
-- **dlib**: Facial landmark detection
-- **FastAPI**: Web framework
-- **OpenCV**: Computer vision
 
 ---
 
-**Built with ❤️ for GazeHome Project**
+## 🚀 빠른 시작
+
+### 📋 사전 요구사항
+
+- **Python 3.11+**
+- **웹캠 또는 USB 카메라**
+- **운영체제**: macOS, Linux, Raspberry Pi OS
+- (선택) Docker & Docker Compose
+
+#### 시스템 패키지 설치
+
+<details>
+<summary><b>macOS</b></summary>
+
+```bash
+brew install cmake
+```
+</details>
+
+<details>
+<summary><b>Ubuntu/Debian</b></summary>
+
+```bash
+sudo apt-get update
+sudo apt-get install -y build-essential cmake \
+    libopencv-dev python3-opencv \
+    libopenblas-dev liblapack-dev \
+    libx11-dev libgtk-3-dev
+```
+</details>
+
+<details>
+<summary><b>Raspberry Pi</b></summary>
+
+```bash
+sudo apt-get update
+sudo apt-get install -y build-essential cmake \
+    python3-opencv libatlas-base-dev \
+    libopenblas-dev liblapack-dev \
+    v4l-utils
+```
+</details>
+
+---
+
+### 🐍 방법 1: Python 직접 실행 (개발용)
+
+#### 1️⃣ 환경 설정
+
+```bash
+# Conda 환경 생성 (권장)
+conda create -n gaze311 python=3.11
+conda activate gaze311
+
+# 또는 venv 사용
+python3 -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
+```
+
+#### 2️⃣ 의존성 설치
+
+```bash
+# 프로젝트 클론
+git clone https://github.com/yourusername/gazehome-edge.git
+cd gazehome-edge
+
+# Python 패키지 설치
+pip install -r requirements.txt
+```
+
+#### 3️⃣ dlib 모델 다운로드
+
+```bash
+# 모델 디렉토리로 이동
+cd edge/model/trained_models/
+
+# 모델 다운로드 및 압축 해제
+wget http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2
+bunzip2 shape_predictor_68_face_landmarks.dat.bz2
+
+cd ../../..
+```
+
+#### 4️⃣ 설정 파일 편집
+
+`edge/config.json` 파일을 수정하세요:
+
+```json
+{
+    "user_uuid": "8f6b3c54-7b3b-4d4c-9e5d-2e8b1c1d4f99",
+    "ai_service_url": "http://localhost:8001",
+    "mock_mode": true,  // 테스트: true, 프로덕션: false
+    "gaze": {
+        "dwell_time": 0.8,
+        "screen_width": 1920,
+        "screen_height": 1080,
+        "camera_index": 0
+    },
+    "polling": {
+        "device_status_interval": 5.0,
+        "recommendation_interval": 3.0
+    }
+}
+```
+
+#### 5️⃣ 서버 실행
+
+```bash
+cd edge
+python app.py
+```
+
+브라우저에서 **http://localhost:8000** 접속
+
+---
+
+### 🐳 방법 2: Docker 실행 (배포용)
+
+#### 1️⃣ Docker 설치 확인
+
+```bash
+docker --version
+docker-compose --version
+```
+
+#### 2️⃣ 설정 파일 준비
+
+`edge/config.json` 파일이 존재하는지 확인하세요. 없으면 위의 예시를 참고하여 생성합니다.
+
+#### 3️⃣ Docker Compose로 실행
+
+```bash
+# 이미지 빌드 및 컨테이너 시작
+docker-compose up -d
+
+# 로그 확인
+docker-compose logs -f
+
+# 중지
+docker-compose stop
+
+# 완전 삭제
+docker-compose down
+```
+
+#### 4️⃣ 라즈베리파이 자동 배포
+
+```bash
+# 실행 권한 부여
+chmod +x run_raspberry_pi.sh
+
+# 스크립트 실행
+./run_raspberry_pi.sh
+```
+
+스크립트는 자동으로 다음을 수행합니다:
+- Docker 및 카메라 확인
+- config.json 생성 (없는 경우)
+- 이미지 빌드
+- 컨테이너 실행
+- 실시간 로그 출력
+
+---
+
+## 🎮 사용 방법
+
+### 1️⃣ 시선 보정 (Calibration)
+
+처음 사용 시 반드시 시선 보정을 진행해야 합니다.
+
+1. 웹 UI에서 **"시선 보정 시작"** 버튼 클릭
+2. 화면에 나타나는 **빨간 점**을 2-3초간 응시
+3. 5개 포인트 × 30샘플 자동 수집
+4. 보정 완료 후 `calibration_params.json`에 자동 저장
+
+**보정 팁:**
+- ✅ 얼굴을 화면 중앙에 위치
+- ✅ 충분한 조명 확보 (정면 조명 권장)
+- ✅ 카메라와 40-60cm 거리 유지
+- ✅ 안경 착용 시 빛 반사 주의
+
+---
+
+### 2️⃣ 클릭 모드
+
+#### 🔵 Dwell Click (응시 클릭)
+
+가장 주요한 클릭 방식입니다.
+
+1. 제어하고 싶은 **디바이스 카드**를 응시
+2. 약 **0.8초** 동안 시선 유지
+3. 파란 원이 점점 커지며 **진행도 표시**
+4. 시간 완료 시 **자동 클릭**
+
+#### 👁️ Blink Click (깜빡임 클릭)
+
+보조 클릭 방식입니다.
+
+1. 대상을 보면서 **의도적으로 눈 감기**
+2. **0.3~1.0초** 사이의 깜빡임만 인식
+3. 자연스러운 깜빡임(< 0.3초)은 무시
+
+**민감도 조정:**
+보정 화면에서 "응시 민감도" 슬라이더로 **0.3~2.0초** 범위 조절 가능
+
+---
+
+### 3️⃣ 디바이스 제어
+
+#### 상태 확인
+- 디바이스 카드에 **실시간 상태** 표시
+- 🟢 녹색 = ON
+- ⚪ 회색 = OFF
+- 🔄 5초마다 자동 업데이트
+
+#### 제어 실행
+1. 디바이스를 **응시 클릭** 또는 **깜빡임 클릭**
+2. AI 서비스가 **사용자 의도 분석**
+3. **추천 팝업** 표시
+4. **YES** 또는 **NO** 선택
+
+---
+
+### 4️⃣ AI 추천 시스템
+
+AI가 다음 정보를 분석하여 추천합니다:
+
+- ⏰ **시간대**: 아침/점심/저녁
+- 🌤️ **날씨**: MCP(Model Context Protocol)를 통한 실시간 날씨 정보
+- 📊 **디바이스 상태**: 현재 ON/OFF, 온도 등
+- 📈 **사용 패턴**: 과거 제어 히스토리
+
+**예시:**
+- 저녁 7시 + 추운 날씨 → "난방을 22도로 켜시겠습니까?"
+- 밤 11시 + 조명 켜짐 → "모든 조명을 끄시겠습니까?"
+
+---
+
+## 🔌 API 문서
+
+### REST API 엔드포인트
+
+<details>
+<summary><b>GET /api/state</b> - 시스템 상태 조회</summary>
+
+**Response:**
+```json
+{
+  "user_uuid": "8f6b3c54-7b3b-4d4c-9e5d-2e8b1c1d4f99",
+  "calibrated": true,
+  "devices": [
+    {
+      "device_id": "ac_living_room",
+      "name": "거실 에어컨",
+      "device_type": "air_conditioner",
+      "current_state": {
+        "is_on": true,
+        "temperature": 24
+      }
+    }
+  ],
+  "recommendation": null
+}
+```
+</details>
+
+<details>
+<summary><b>POST /api/devices/{device_id}/control</b> - 디바이스 제어</summary>
+
+**Request:**
+```json
+{
+  "action": "toggle",  // "turn_on", "turn_off", "set_temperature"
+  "parameters": {
+    "temperature": 24  // 선택적
+  }
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "device_id": "ac_living_room",
+  "new_state": {
+    "is_on": false,
+    "temperature": 24
+  }
+}
+```
+</details>
+
+<details>
+<summary><b>POST /api/calibration/start</b> - 보정 시작</summary>
+
+**Response:**
+```json
+{
+  "status": "started",
+  "total_targets": 5,
+  "samples_per_target": 30
+}
+```
+</details>
+
+<details>
+<summary><b>GET /api/calibration/progress</b> - 보정 진행 상황</summary>
+
+**Response:**
+```json
+{
+  "is_complete": false,
+  "current_target": 2,
+  "total_targets": 5,
+  "current_samples": 15,
+  "required_samples": 30,
+  "target_position": [960, 540]
+}
+```
+</details>
+
+<details>
+<summary><b>POST /api/dwell-time</b> - 응시 시간 설정</summary>
+
+**Request:**
+```json
+{
+  "dwell_time": 0.8
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "dwell_time": 0.8
+}
+```
+</details>
+
+---
+
+### WebSocket API
+
+실시간 양방향 통신을 위한 WebSocket 엔드포인트: `ws://localhost:8000/ws`
+
+#### 서버 → 클라이언트 메시지
+
+<details>
+<summary><b>gaze</b> - 시선 위치 업데이트</summary>
+
+```json
+{
+  "type": "gaze",
+  "position": {"x": 960, "y": 540},
+  "pupils_detected": true,
+  "timestamp": 1234567890.123
+}
+```
+</details>
+
+<details>
+<summary><b>dwell</b> - Dwell 진행도</summary>
+
+```json
+{
+  "type": "dwell",
+  "progress": 0.65,  // 0.0 ~ 1.0
+  "position": {"x": 960, "y": 540}
+}
+```
+</details>
+
+<details>
+<summary><b>click</b> - 클릭 이벤트</summary>
+
+```json
+{
+  "type": "click",
+  "method": "dwell",  // "dwell" or "blink"
+  "position": {"x": 960, "y": 540},
+  "device_id": "ac_living_room"  // AOI 매핑 성공 시
+}
+```
+</details>
+
+<details>
+<summary><b>state</b> - 시스템 상태 업데이트</summary>
+
+```json
+{
+  "type": "state",
+  "calibrated": true,
+  "devices": [...],
+  "recommendation": {...}
+}
+```
+</details>
+
+---
+
+### Gateway API 통합
+
+Edge Device는 AI Service를 통해 Gateway와 통신합니다.
+
+**데이터 흐름:**
+```
+Edge Device → AI Service (Port 8001) → Gateway → Smart Device
+```
+
+**Mock 모드:**
+- `mock_mode: true`: 가상 디바이스로 UI 테스트
+- `mock_mode: false`: 실제 Gateway 연동
+
+---
+
+## ⚙️ 설정 레퍼런스
+
+| 파라미터                          | 설명                         | 기본값                                   |
+| --------------------------------- | ---------------------------- | ---------------------------------------- |
+| `user_uuid`                       | 사용자 고유 식별자           | `"8f6b3c54-7b3b-4d4c-9e5d-2e8b1c1d4f99"` |
+| `ai_service_url`                  | AI 서비스 URL                | `"http://localhost:8001"`                |
+| `mock_mode`                       | Mock 모드 활성화 (테스트용)  | `false`                                  |
+| `gaze.dwell_time`                 | Dwell 클릭 응시 시간 (초)    | `0.8`                                    |
+| `gaze.screen_width`               | 화면 너비 (픽셀)             | `1920`                                   |
+| `gaze.screen_height`              | 화면 높이 (픽셀)             | `1080`                                   |
+| `gaze.camera_index`               | 카메라 디바이스 인덱스       | `0`                                      |
+| `polling.device_status_interval`  | 디바이스 상태 갱신 주기 (초) | `5.0`                                    |
+| `polling.recommendation_interval` | AI 추천 폴링 주기 (초)       | `3.0`                                    |
+
+---
+
+## 🐛 문제 해결
+
+### ❌ 카메라가 열리지 않음
+
+```bash
+# 사용 가능한 카메라 확인
+python -c "import cv2; print([i for i in range(5) if cv2.VideoCapture(i).isOpened()])"
+
+# config.json에서 camera_index 수정
+```
+
+**Docker 사용 시:**
+```bash
+# 카메라 권한 확인
+ls -l /dev/video*
+
+# 권한 부여
+sudo chmod 666 /dev/video0
+sudo usermod -aG video $USER
+```
+
+---
+
+### ❌ 동공 감지 안 됨 (pupils_detected=False)
+
+**원인:**
+- 조명 부족
+- 얼굴 각도
+- 카메라 거리
+
+**해결:**
+- ✅ 조명을 **밝게** 조정 (정면 조명 권장)
+- ✅ 얼굴을 **화면 정면**에 위치
+- ✅ 카메라와 **40-60cm** 거리 유지
+- ✅ 안경 착용 시 **빛 반사** 각도 조정
+
+---
+
+### ❌ WebSocket 연결 끊김
+
+```bash
+# uvicorn[standard] 재설치
+pip install --upgrade 'uvicorn[standard]'
+
+# 방화벽 확인
+sudo ufw allow 8000
+```
+
+---
+
+### ❌ dlib 설치 실패
+
+<details>
+<summary><b>macOS</b></summary>
+
+```bash
+brew install cmake
+pip install dlib
+```
+</details>
+
+<details>
+<summary><b>Ubuntu/Debian</b></summary>
+
+```bash
+sudo apt-get install cmake libboost-all-dev
+pip install dlib
+```
+</details>
+
+<details>
+<summary><b>Raspberry Pi (오래 걸림: 1-2시간)</b></summary>
+
+```bash
+# piwheels 사용 (빠름)
+pip install dlib --extra-index-url https://www.piwheels.org/simple
+
+# 또는 소스 빌드 (느림)
+sudo apt-get install cmake libboost-all-dev
+pip install dlib
+```
+</details>
+
+---
+
+### ❌ Gateway/AI Service 응답 없음
+
+1. **서버 실행 확인**
+   ```bash
+   curl http://localhost:8001/health
+   curl http://localhost:8000/health
+   ```
+
+2. **config.json URL 확인**
+   ```json
+   {
+     "ai_service_url": "http://localhost:8001"
+   }
+   ```
+
+3. **방화벽 설정**
+   ```bash
+   sudo ufw allow 8000
+   sudo ufw allow 8001
+   ```
+
+---
+
+### ❌ 보정이 부정확함
+
+- ✅ **충분한 조명** 확보
+- ✅ 보정 중 **머리 고정**
+- ✅ **재보정** 수행 ("시선 보정 시작" 다시 클릭)
+- ✅ `gaze/calibrator.py`의 `stability_threshold` 조정
+
+```python
+# gaze/calibrator.py
+STABILITY_THRESHOLD = 30  # 기본값, 높일수록 안정적
+```
+
+---
+
+## 📊 성능 최적화
+
+### 라즈베리파이 최적화
+
+#### 1️⃣ 비디오 해상도 줄이기
+
+`edge/app.py` 수정:
+
+```python
+# 카메라 읽기 전에 추가
+camera.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+```
+
+#### 2️⃣ 폴링 주기 늘리기
+
+`edge/config.json` 수정:
+
+```json
+{
+  "polling": {
+    "device_status_interval": 10.0,  // 5.0 → 10.0
+    "recommendation_interval": 5.0   // 3.0 → 5.0
+  }
+}
+```
+
+#### 3️⃣ 하드웨어 가속 활성화
+
+```bash
+# OpenCL 설치 (Raspberry Pi)
+sudo apt-get install ocl-icd-libopencl1
+```
+
+---
+
+### 메모리 사용량
+
+| 구성요소           | 메모리     |
+| ------------------ | ---------- |
+| Python + FastAPI   | ~150MB     |
+| dlib 모델          | ~100MB     |
+| OpenCV + 웹캠 버퍼 | ~50MB      |
+| **총합**           | **~300MB** |
+
+---
+
+### 프레임 레이트
+
+| 환경           | FPS       |
+| -------------- | --------- |
+| 고성능 PC      | 30 FPS    |
+| 라즈베리파이 4 | 15-20 FPS |
+| 라즈베리파이 3 | 10-15 FPS |
+
+`edge/app.py`에서 조정 가능:
+
+```python
+# 프레임 레이트 제한
+await asyncio.sleep(1/30)  # 30 FPS
+```
+
+---
+
+## 🔒 보안 고려사항
+
+⚠️ **이 프로젝트는 데모 구현체입니다.**
+
+프로덕션 환경에서는 다음을 추가하세요:
+
+- 🔐 **인증 시스템**: JWT 토큰 기반 사용자 인증
+- 🔒 **HTTPS**: SSL/TLS 암호화 통신
+- 🛡️ **CORS 제한**: 허용된 도메인만 접근
+- 📦 **보정 데이터 암호화**: `calibration_params.json` 암호화
+- 🚦 **Rate Limiting**: API 호출 제한
+- 🔑 **WebSocket 인증**: 토큰 기반 WebSocket 연결
+
+---
+
+## 📝 데이터 흐름
+
+```
+1. 카메라 → 시선 추적 → 보정 변환 → 스크린 좌표
+
+2. 스크린 좌표 → Dwell 감지 → 클릭 이벤트
+
+3. 클릭 이벤트 → AOI 매핑 → 디바이스 ID + 액션
+
+4. 디바이스 정보 → AI 서비스 → 의도 분석 → 추천
+
+5. 추천 → 사용자 (YES/NO) → AI 서비스 응답
+
+6. YES → Gateway 제어 → 디바이스 상태 업데이트 → UI 갱신
+```
+
+---
+
+## 🧪 테스트
+
+### Mock 모드 테스트
+
+`edge/config.json`에서 `mock_mode: true` 설정 후:
+
+```bash
+cd edge
+python app.py
+```
+
+**Mock 모드 기능:**
+- 가상 디바이스 3개 (에어컨, 조명, 온도조절기)
+- AI 추천 시뮬레이션
+- Gateway 없이 UI 테스트 가능
+
+---
+
+### 브랜치별 모드
+
+```bash
+# 테스트 브랜치 (Mock 모드)
+git checkout test
+git checkout test2
+
+# 프로덕션 브랜치 (Real 모드)
+git checkout main
+```
+
+---
+
+## 🚀 배포 가이드
+
+### Raspberry Pi 배포
+
+1. **Docker 설치**
+   ```bash
+   curl -fsSL https://get.docker.com -o get-docker.sh
+   sh get-docker.sh
+   sudo usermod -aG docker $USER
+   ```
+
+2. **Docker Compose 설치**
+   ```bash
+   sudo apt-get install docker-compose
+   ```
+
+3. **프로젝트 클론**
+   ```bash
+   git clone https://github.com/yourusername/gazehome-edge.git
+   cd gazehome-edge
+   ```
+
+4. **자동 배포**
+   ```bash
+   chmod +x run_raspberry_pi.sh
+   ./run_raspberry_pi.sh
+   ```
+
+5. **접속**
+   ```
+   http://<raspberry-pi-ip>:8000
+   ```
+
+---
+
+### Systemd 서비스 등록 (자동 시작)
+
+```bash
+sudo tee /etc/systemd/system/gazehome-edge.service > /dev/null <<EOF
+[Unit]
+Description=GazeHome Edge Device
+After=network.target
+
+[Service]
+Type=simple
+User=$USER
+WorkingDirectory=$(pwd)
+ExecStart=$(pwd)/venv/bin/python $(pwd)/edge/app.py
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+# 서비스 활성화
+sudo systemctl daemon-reload
+sudo systemctl enable gazehome-edge.service
+sudo systemctl start gazehome-edge.service
+
+# 상태 확인
+sudo systemctl status gazehome-edge.service
+```
+
+---
+
+## 🤝 기여하기
+
+이슈 및 Pull Request를 환영합니다!
+
+### 개발 환경 설정
+
+```bash
+# 레포지토리 포크 후 클론
+git clone https://github.com/yourusername/gazehome-edge.git
+cd gazehome-edge
+
+# 개발 브랜치 생성
+git checkout -b feature/my-feature
+
+# 의존성 설치
+pip install -r requirements.txt
+
+# 커밋 및 푸시
+git add .
+git commit -m "feat: add new feature"
+git push origin feature/my-feature
+```
+
+---
+
+## 🎓 향후 개선 계획
+
+- [ ] **WebSocket 기반 실시간 추천** (폴링 대체)
+- [ ] **멀티유저 지원** (얼굴 인식)
+- [ ] **음성 확인** (추천에 대한 음성 응답)
+- [ ] **제스처 명령** (고개 끄덕임, 흔들기)
+- [ ] **오프라인 모드** (캐시된 추천)
+- [ ] **PWA 지원** (모바일 접근)
+- [ ] **분석 대시보드** (사용 패턴 시각화)
+- [ ] **커스텀 AOI 편집기** (사용자 정의 영역)
+
+---
+
+## 📄 라이선스
+
+이 프로젝트는 접근성 향상을 목표로 개발되었습니다.  
+자세한 라이선스는 [LICENSE](LICENSE) 파일을 참조하세요.
+
+---
+
+## 🙏 크레딧
+
+- **[GazeTracking](https://github.com/antoinelame/GazeTracking)** - 기본 시선 추적 라이브러리
+- **[dlib](http://dlib.net/)** - 얼굴 랜드마크 감지
+- **[FastAPI](https://fastapi.tiangolo.com/)** - 웹 프레임워크
+- **[OpenCV](https://opencv.org/)** - 컴퓨터 비전 라이브러리
+
+---
+
+## 📞 문의
+
+문제가 발생하면 [GitHub Issues](https://github.com/yourusername/gazehome-edge/issues)에 등록해주세요.
+
+---
+
+<p align="center">
+  <b>Built with ❤️ for Accessibility</b><br>
+  <i>GazeHome Project</i>
+</p>
