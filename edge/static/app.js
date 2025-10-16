@@ -303,6 +303,12 @@ async function calibrationLoop() {
                 // Calibration complete!
                 calibrationInProgress = false;
                 document.getElementById('calibration-overlay').classList.add('hidden');
+                
+                // Canvas 정리
+                if (calibrationCanvas && calibrationCtx) {
+                    calibrationCtx.clearRect(0, 0, calibrationCanvas.width, calibrationCanvas.height);
+                }
+                
                 updateCalibrationStatus(true);
                 alert('시선 보정이 완료되었습니다!');
                 break;
@@ -368,17 +374,19 @@ function updateGazePointer(data) {
     pointer.style.top = `${y}px`;
     pointer.classList.add('active');
 
-    // 보정 화면 Canvas에 시선 포인터 그리기
+    // 보정 화면 Canvas에 시선 포인터 그리기 (캘리브레이션 중일 때만)
     if (calibrationInProgress && calibrationCtx && calibrationCanvas) {
         calibrationCtx.clearRect(0, 0, calibrationCanvas.width, calibrationCanvas.height);
 
         // 보정 화면 웹캠의 상대 좌표 계산
         const calibrationVideo = document.getElementById('calibration-video');
-        const calibrationRect = calibrationVideo.getBoundingClientRect();
-        const calibrationRelX = (x / window.innerWidth) * calibrationRect.width;
-        const calibrationRelY = (y / window.innerHeight) * calibrationRect.height;
+        if (calibrationVideo) {
+            const calibrationRect = calibrationVideo.getBoundingClientRect();
+            const calibrationRelX = (x / window.innerWidth) * calibrationRect.width;
+            const calibrationRelY = (y / window.innerHeight) * calibrationRect.height;
 
-        drawGazePointer(calibrationCtx, calibrationRelX, calibrationRelY, 0.7); // 작은 크기
+            drawGazePointer(calibrationCtx, calibrationRelX, calibrationRelY, 0.7); // 작은 크기
+        }
     }
 }
 
@@ -440,22 +448,87 @@ function updateDwellProgress(data) {
 
 // 시선 클릭 이벤트 처리
 function handleGazeClick(data) {
-    console.log('Gaze click detected:', data);
+    console.log('✅ 클릭 완료!', data);
 
-    // 시각적 피드백 (소프트 레드로 변경)
+    // 시각적 피드백 1: 포인터 색상 변경
     const pointer = document.getElementById('gaze-pointer');
-    pointer.style.border = '2.5px solid #fc8181';
+    pointer.style.border = '3px solid #48bb78'; // 녹색으로 변경
+    pointer.style.boxShadow = '0 0 20px rgba(72, 187, 120, 0.8)';
+    pointer.style.transform = 'translate(-50%, -50%) scale(1.3)'; // 크기 증가
+    
+    // 클릭 애니메이션 후 원래대로
     setTimeout(() => {
         pointer.style.border = '2.5px solid #4fd1c5';
-    }, 200);
+        pointer.style.boxShadow = '0 0 12px rgba(79, 209, 197, 0.6), 0 0 24px rgba(79, 209, 197, 0.4)';
+        pointer.style.transform = 'translate(-50%, -50%) scale(1)';
+    }, 300);
+
+    // 시각적 피드백 2: 클릭 효과 표시
+    showClickEffect(data.position);
 
     // 기기 클릭된 경우
     if (data.device_id) {
-        console.log('Device clicked:', data.device_id, data.device_name);
+        console.log(`🎯 디바이스 클릭됨: ${data.device_name} (${data.method})`);
 
         // 기기 카드 하이라이트
         highlightDevice(data.device_id);
+        
+        // 알림 표시
+        showClickNotification(`디바이스 제어: ${data.device_name || data.device_id}`);
+    } else {
+        console.log(`👆 화면 클릭됨: (${data.position?.x}, ${data.position?.y})`);
     }
+}
+
+// 클릭 효과 표시 (ripple effect)
+function showClickEffect(position) {
+    if (!position) return;
+    
+    const effect = document.createElement('div');
+    effect.style.position = 'fixed';
+    effect.style.left = `${position.x || 0}px`;
+    effect.style.top = `${position.y || 0}px`;
+    effect.style.width = '20px';
+    effect.style.height = '20px';
+    effect.style.borderRadius = '50%';
+    effect.style.border = '3px solid #48bb78';
+    effect.style.transform = 'translate(-50%, -50%)';
+    effect.style.pointerEvents = 'none';
+    effect.style.zIndex = '10000';
+    effect.style.animation = 'clickRipple 0.6s ease-out';
+    
+    document.body.appendChild(effect);
+    
+    setTimeout(() => {
+        document.body.removeChild(effect);
+    }, 600);
+}
+
+// 클릭 알림 표시
+function showClickNotification(message) {
+    const notification = document.createElement('div');
+    notification.textContent = message;
+    notification.style.position = 'fixed';
+    notification.style.top = '20px';
+    notification.style.right = '20px';
+    notification.style.padding = '12px 20px';
+    notification.style.background = 'rgba(72, 187, 120, 0.95)';
+    notification.style.color = 'white';
+    notification.style.borderRadius = '8px';
+    notification.style.fontSize = '14px';
+    notification.style.fontWeight = '500';
+    notification.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.2)';
+    notification.style.zIndex = '10001';
+    notification.style.animation = 'slideInRight 0.3s ease-out';
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.animation = 'slideOutRight 0.3s ease-out';
+        setTimeout(() => {
+            document.body.removeChild(notification);
+        }, 300);
+    }, 2000);
 }
 
 // 기기 카드 하이라이트
