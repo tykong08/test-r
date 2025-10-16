@@ -303,12 +303,12 @@ async function calibrationLoop() {
                 // Calibration complete!
                 calibrationInProgress = false;
                 document.getElementById('calibration-overlay').classList.add('hidden');
-                
+
                 // Canvas 정리
                 if (calibrationCanvas && calibrationCtx) {
                     calibrationCtx.clearRect(0, 0, calibrationCanvas.width, calibrationCanvas.height);
                 }
-                
+
                 updateCalibrationStatus(true);
                 alert('시선 보정이 완료되었습니다!');
                 break;
@@ -455,7 +455,7 @@ function handleGazeClick(data) {
     pointer.style.border = '3px solid #48bb78'; // 녹색으로 변경
     pointer.style.boxShadow = '0 0 20px rgba(72, 187, 120, 0.8)';
     pointer.style.transform = 'translate(-50%, -50%) scale(1.3)'; // 크기 증가
-    
+
     // 클릭 애니메이션 후 원래대로
     setTimeout(() => {
         pointer.style.border = '2.5px solid #4fd1c5';
@@ -472,7 +472,7 @@ function handleGazeClick(data) {
 
         // 기기 카드 하이라이트
         highlightDevice(data.device_id);
-        
+
         // 알림 표시
         showClickNotification(`디바이스 제어: ${data.device_name || data.device_id}`);
     } else {
@@ -483,7 +483,7 @@ function handleGazeClick(data) {
 // 클릭 효과 표시 (ripple effect)
 function showClickEffect(position) {
     if (!position) return;
-    
+
     const effect = document.createElement('div');
     effect.style.position = 'fixed';
     effect.style.left = `${position.x || 0}px`;
@@ -496,9 +496,9 @@ function showClickEffect(position) {
     effect.style.pointerEvents = 'none';
     effect.style.zIndex = '10000';
     effect.style.animation = 'clickRipple 0.6s ease-out';
-    
+
     document.body.appendChild(effect);
-    
+
     setTimeout(() => {
         document.body.removeChild(effect);
     }, 600);
@@ -520,9 +520,9 @@ function showClickNotification(message) {
     notification.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.2)';
     notification.style.zIndex = '10001';
     notification.style.animation = 'slideInRight 0.3s ease-out';
-    
+
     document.body.appendChild(notification);
-    
+
     setTimeout(() => {
         notification.style.animation = 'slideOutRight 0.3s ease-out';
         setTimeout(() => {
