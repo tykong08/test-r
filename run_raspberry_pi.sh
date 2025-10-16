@@ -30,9 +30,9 @@ if [ ! -c /dev/video0 ]; then
 fi
 
 # config.json 확인
-if [ ! -f "config.json" ]; then
-    echo "⚠️  config.json이 없습니다. 기본 설정 파일을 생성합니다..."
-    cat > config.json <<EOF
+if [ ! -f "edge/config.json" ]; then
+    echo "⚠️  edge/config.json이 없습니다. 기본 설정 파일을 생성합니다..."
+    cat > edge/config.json <<EOF
 {
     "user_uuid": "$(uuidgen)",
     "ai_service_url": "http://localhost:8001",
@@ -51,7 +51,7 @@ if [ ! -f "config.json" ]; then
     "calibration_file": "calibration_params.json"
 }
 EOF
-    echo "✅ config.json 생성 완료"
+    echo "✅ edge/config.json 생성 완료"
 fi
 
 # 로그 디렉토리 생성

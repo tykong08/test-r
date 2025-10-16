@@ -27,10 +27,10 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # dlib shape predictor 모델 다운로드 (사전 다운로드)
-RUN mkdir -p /app/model/trained_models && \
-    wget -O /app/model/trained_models/shape_predictor_68_face_landmarks.dat.bz2 \
+RUN mkdir -p /app/edge/model/trained_models && \
+    wget -O /app/edge/model/trained_models/shape_predictor_68_face_landmarks.dat.bz2 \
     http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2 && \
-    bunzip2 /app/model/trained_models/shape_predictor_68_face_landmarks.dat.bz2
+    bunzip2 /app/edge/model/trained_models/shape_predictor_68_face_landmarks.dat.bz2
 
 # Python 의존성 파일 복사
 COPY requirements.txt .
@@ -41,7 +41,10 @@ RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
 # 애플리케이션 코드 복사
-COPY . .
+COPY edge/ /app/edge/
+
+# 작업 디렉토리를 edge로 변경
+WORKDIR /app/edge
 
 # 설정 파일 확인
 RUN if [ ! -f "config.json" ]; then \
