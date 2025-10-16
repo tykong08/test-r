@@ -166,6 +166,7 @@ class BlinkClickDetector:
         if is_blinking and not self.is_blinking:
             self.blink_start_time = current_time
             self.is_blinking = True
+            logger.debug(f"Blink started at {current_time}")
             return None
         
         # 깜빡임 종료
@@ -175,11 +176,15 @@ class BlinkClickDetector:
             if self.blink_start_time is not None:
                 blink_duration = current_time - self.blink_start_time
                 
+                logger.debug(f"Blink ended: duration={blink_duration:.2f}s (min={self.blink_duration_min}, max={self.blink_duration_max})")
+                
                 # 깜빡임 지속 시간이 유효한 범위인지 확인
                 if self.blink_duration_min <= blink_duration <= self.blink_duration_max:
                     # 의도적인 깜빡임 감지!
-                    logger.info(f"Blink click detected: {blink_duration:.2f}s")
+                    logger.info(f"✅ Blink click detected: {blink_duration:.2f}s at position {self.last_gaze_position}")
                     return self.last_gaze_position
+                else:
+                    logger.debug(f"❌ Blink too {'short' if blink_duration < self.blink_duration_min else 'long'}: {blink_duration:.2f}s")
                 
             self.blink_start_time = None
         
@@ -275,7 +280,9 @@ class GazeTracker:
         
         # 캘리브레이션 사용 가능 시 적용
         if self.calibrator.is_calibrated:
-            h_ratio, v_ratio = self.calibrator.apply_calibration(h_ratio, v_ratio)
+            calibrated_h, calibrated_v = self.calibrator.apply_calibration(h_ratio, v_ratio)
+            logger.debug(f"Raw: ({h_ratio:.3f}, {v_ratio:.3f}) -> Calibrated: ({calibrated_h:.3f}, {calibrated_v:.3f})")
+            h_ratio, v_ratio = calibrated_h, calibrated_v
         
         # 화면 좌표로 변환
         screen_x = int(h_ratio * self.screen_width)
@@ -284,6 +291,8 @@ class GazeTracker:
         # 화면 경계로 제한
         screen_x = max(0, min(screen_x, self.screen_width - 1))
         screen_y = max(0, min(screen_y, self.screen_height - 1))
+        
+        logger.debug(f"Screen position: ({screen_x}, {screen_y}) / ({self.screen_width}, {self.screen_height})")
         
         return (screen_x, screen_y)
     

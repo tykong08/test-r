@@ -483,14 +483,22 @@ async def websocket_endpoint(websocket: WebSocket):
                 if frame_count % 100 == 0:
                     logger.info(f"Gaze result: position={result.get('gaze_position')}, pupils_detected={result.get('pupils_detected')}")
                 
-                # 시선 위치 전송
-                if result.get('gaze_position'):
+                # 시선 위치 전송 (동공이 제대로 감지될 때만)
+                if result.get('gaze_position') and result.get('pupils_detected'):
                     await websocket.send_json({
                         'type': 'gaze',
                         'position': {
                             'x': result['gaze_position'][0],
                             'y': result['gaze_position'][1]
-                        }
+                        },
+                        'pupils_detected': True
+                    })
+                elif not result.get('pupils_detected'):
+                    # 동공이 감지되지 않으면 포인터 숨김
+                    await websocket.send_json({
+                        'type': 'gaze',
+                        'position': None,
+                        'pupils_detected': False
                     })
                 
                 # 응시 진행률 전송
