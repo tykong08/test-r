@@ -48,7 +48,7 @@ WORKDIR /app/edge
 
 # 설정 파일 확인
 RUN if [ ! -f "config.json" ]; then \
-        echo "{\"user_uuid\": \"default-uuid\", \"mock_mode\": true}" > config.json; \
+    echo "{\"user_uuid\": \"default-uuid\", \"mock_mode\": true}" > config.json; \
     fi
 
 # 포트 노출
