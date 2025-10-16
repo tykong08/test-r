@@ -1,6 +1,24 @@
 """
-Main Web Server for Edge Device
-Provides web UI and handles gaze tracking, calibration, and device control
+GazeHome Edge Device - 메인 웹 서버
+====================================
+시선 추적 기반 스마트홈 제어 시스템의 핵심 서버입니다.
+
+주요 기능:
+- FastAPI 기반 웹 서버 및 REST API 제공
+- WebSocket을 통한 실시간 시선 데이터 스트리밍
+- 시선 보정(Calibration) 프로세스 관리
+- 스마트홈 디바이스 제어 및 상태 관리
+- AI 서비스와의 연동 (추천 시스템)
+- 웹캠 영상 스트리밍 및 시선 추적
+
+의존성:
+- FastAPI: 웹 서버 프레임워크
+- OpenCV: 카메라 제어 및 영상 처리
+- WebSocket: 실시간 양방향 통신
+- GazeTracker: 시선 추적 엔진
+
+작성자: GazeHome Team
+용도: 신체 장애인을 위한 접근성 향상 솔루션
 """
 import asyncio
 import cv2

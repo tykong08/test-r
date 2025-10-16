@@ -1,6 +1,25 @@
 """
-Gaze Tracker with Dwell-time Click Detection
-Integrates with existing gaze_tracking module and applies calibration
+GazeHome - 시선 추적 및 클릭 감지 모듈
+======================================
+dlib 기반 시선 추적과 두 가지 클릭 방식을 통합한 핵심 모듈입니다.
+
+주요 클래스:
+- GazeTracker: 메인 시선 추적 및 클릭 관리 클래스
+- DwellClickDetector: 응시(Dwell) 기반 클릭 감지
+- BlinkClickDetector: 깜빡임(Blink) 기반 클릭 감지  
+- AOI: 디바이스 매핑을 위한 관심 영역(Area of Interest)
+
+클릭 모드:
+- dwell: 일정 시간 이상 응시 시 클릭
+- blink: 0.3~1.0초 사이의 의도적 깜빡임으로 클릭
+- both: 두 방식 모두 사용 가능
+
+시선 보정(Calibration):
+- 5포인트 보정 방식 사용
+- 화면 좌표계로 변환 및 정규화
+- 보정 데이터 저장/로드 기능
+
+작성자: GazeHome Team
 """
 import sys
 import os
@@ -17,7 +36,7 @@ logger = logging.getLogger(__name__)
 
 
 class AOI:
-    """Area of Interest for device mapping"""
+    """디바이스 매핑을 위한 관심 영역 (Area of Interest)"""
     
     def __init__(self, x: int, y: int, width: int, height: int, 
                  device_id: str, action: str = "toggle"):

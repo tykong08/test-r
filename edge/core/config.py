@@ -1,6 +1,26 @@
 """
-Configuration Manager for Edge Device
-Handles loading and saving configuration parameters
+GazeHome - 설정 관리 모듈
+==========================
+config.json 파일을 로드하고 관리하는 모듈입니다.
+
+주요 기능:
+- JSON 기반 설정 파일 읽기/쓰기
+- 설정값 검증 및 기본값 제공
+- Property를 통한 타입 안전한 접근
+
+설정 항목:
+- user_uuid: 사용자 고유 식별자
+- ai_service_url: AI 서비스 엔드포인트
+- mock_mode: 테스트 모드 활성화 여부
+- gaze: 시선 추적 관련 설정 (dwell_time, screen_size 등)
+- polling: 폴링 간격 설정
+
+사용 예:
+    from core.config import config
+    print(config.dwell_time)  # 0.8
+    config.save_config()
+
+작성자: GazeHome Team
 """
 import json
 import os
@@ -9,7 +29,7 @@ from pathlib import Path
 
 
 class Config:
-    """Configuration manager"""
+    """설정 관리 클래스"""
     
     def __init__(self, config_path: str = "config.json"):
         self.config_path = Path(__file__).parent.parent / config_path

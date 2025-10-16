@@ -1,0 +1,67 @@
+# GazeHome Edge Device - Docker Compose
+# ========================================
+# 라즈베리파이에서 시선 추적 시스템을 Docker로 실행하기 위한 설정
+
+version: '3.8'
+
+services:
+  gazehome-edge:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gazehome-edge
+    
+    # 라즈베리파이 카메라 접근 권한
+    privileged: true
+    devices:
+      - /dev/video0:/dev/video0  # 웹캠 디바이스
+    
+    # 포트 매핑
+    ports:
+      - "8000:8000"  # FastAPI 웹 서버
+    
+    # 볼륨 마운트
+    volumes:
+      - ./config.json:/app/config.json  # 설정 파일
+      - ./calibration_params.json:/app/calibration_params.json  # 보정 데이터
+      - ./logs:/app/logs  # 로그 디렉토리
+    
+    # 환경 변수
+    environment:
+      - PYTHONUNBUFFERED=1
+      - LOG_LEVEL=INFO
+      - CAMERA_INDEX=0
+    
+    # 재시작 정책
+    restart: unless-stopped
+    
+    # 네트워크 설정 (AI 서비스 연동용)
+    networks:
+      - gazehome-network
+    
+    # 헬스체크
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/state"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # AI 서비스 (선택사항 - 로컬에서 실행 시)
+  # ai-service:
+  #   image: gazehome-ai:latest
+  #   container_name: gazehome-ai
+  #   ports:
+  #     - "8001:8001"
+  #   networks:
+  #     - gazehome-network
+  #   restart: unless-stopped
+
+networks:
+  gazehome-network:
+    driver: bridge
+
+# 볼륨 정의 (선택사항)
+volumes:
+  logs:
+    driver: local
