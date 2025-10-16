@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GazeHome Edge Device</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>🏠 GazeHome Edge Device</h1>
+            <div class="status">
+                <span id="calibration-status" class="badge">보정 필요</span>
+                <span id="connection-status" class="badge">연결 중...</span>
+            </div>
+        </header>
+
+        <!-- Gaze Pointer Overlay (full screen) -->
+        <div id="gaze-pointer" class="gaze-pointer"></div>
+        <div id="dwell-progress" class="dwell-progress"></div>
+
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <button id="calibrate-btn" class="btn btn-primary">시선 보정 시작</button>
+            <button id="refresh-btn" class="btn btn-secondary">기기 새로고침</button>
+
+            <div class="dwell-time-setting">
+                <label for="dwell-time-slider">응시 시간: <span id="dwell-time-value">0.8</span>초</label>
+                <input type="range" id="dwell-time-slider" min="0.3" max="2.0" step="0.1" value="0.8">
+                <p class="setting-hint">응시 또는 깜빡임으로 클릭 가능</p>
+            </div>
+
+            <div class="info">
+                <span id="user-uuid">사용자: {{ request.scope.get('user_uuid', 'Loading...') }}</span>
+            </div>
+        </div>
+
+        <!-- Calibration Overlay -->
+        <div id="calibration-overlay" class="calibration-overlay hidden">
+            <div class="calibration-content">
+                <h2>시선 보정 중...</h2>
+                <p id="calibration-instruction">빨간 점을 응시하세요</p>
+
+                <!-- Webcam preview during calibration -->
+                <div class="calibration-webcam">
+                    <img id="calibration-video" src="/video_feed" alt="Webcam Preview">
+                    <div class="webcam-hint">
+                        <p>✓ 얼굴이 화면 중앙에 보이는지 확인하세요</p>
+                        <p>✓ 조명이 충분히 밝은지 확인하세요</p>
+                    </div>
+                </div>
+
+                <div class="calibration-target" id="calibration-target"></div>
+                <div class="calibration-progress">
+                    <div id="calibration-progress-bar" class="progress-bar"></div>
+                </div>
+                <p id="calibration-status-text">
+                    포인트: <span id="current-point">1</span> / 5 |
+                    샘플: <span id="sample-count">0</span> / <span id="sample-required">30</span>
+                </p>
+                <button id="skip-calibration" class="btn btn-secondary">건너뛰기</button>
+            </div>
+        </div>
+
+        <!-- Device Grid -->
+        <div class="device-grid" id="device-grid">
+            <!-- Devices will be populated here -->
+        </div>
+
+        <!-- Recommendation Popup -->
+        <div id="recommendation-popup" class="recommendation-popup hidden">
+            <div class="popup-content">
+                <h3>💡 AI 추천</h3>
+                <p id="recommendation-text">추천 메시지가 여기에 표시됩니다.</p>
+                <div class="popup-actions">
+                    <button id="rec-yes-btn" class="btn btn-success">YES</button>
+                    <button id="rec-no-btn" class="btn btn-danger">NO</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+
+</html>

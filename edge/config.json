@@ -1,0 +1,17 @@
+{
+    "user_uuid": "8f6b3c54-7b3b-4d4c-9e5d-2e8b1c1d4f99",
+    "ai_service_url": "http://localhost:8001",
+    "mock_mode": true,
+    "gaze": {
+        "dwell_time": 0.8,
+        "calibration_points": 5,
+        "screen_width": 1920,
+        "screen_height": 1080,
+        "camera_index": 0
+    },
+    "polling": {
+        "device_status_interval": 5.0,
+        "recommendation_interval": 3.0
+    },
+    "calibration_file": "calibration_params.json"
+}

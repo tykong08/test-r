@@ -1,0 +1,118 @@
+{
+    "devices": [
+        {
+            "device_id": "light_living_room",
+            "device_type": "light",
+            "device_name": "거실 조명",
+            "display_name": "거실 조명",
+            "capabilities": [
+                "on_off",
+                "brightness",
+                "color"
+            ],
+            "current_state": {
+                "is_on": true,
+                "brightness": 80,
+                "color": "#FFFFFF"
+            },
+            "location": "living_room",
+            "brand": "Philips Hue"
+        },
+        {
+            "device_id": "ac_living_room",
+            "device_type": "air_conditioner",
+            "device_name": "거실 에어컨",
+            "display_name": "거실 에어컨",
+            "capabilities": [
+                "on_off",
+                "temperature",
+                "mode",
+                "fan_speed"
+            ],
+            "current_state": {
+                "is_on": false,
+                "temperature": 24,
+                "mode": "cool",
+                "fan_speed": "auto"
+            },
+            "location": "living_room",
+            "brand": "LG"
+        },
+        {
+            "device_id": "tv_living_room",
+            "device_type": "tv",
+            "device_name": "거실 TV",
+            "display_name": "거실 TV",
+            "capabilities": [
+                "on_off",
+                "volume",
+                "channel",
+                "input"
+            ],
+            "current_state": {
+                "is_on": false,
+                "volume": 15,
+                "channel": 11,
+                "input": "HDMI1"
+            },
+            "location": "living_room",
+            "brand": "Samsung"
+        },
+        {
+            "device_id": "speaker_living_room",
+            "device_type": "speaker",
+            "device_name": "거실 스피커",
+            "display_name": "스피커",
+            "capabilities": [
+                "on_off",
+                "volume",
+                "source"
+            ],
+            "current_state": {
+                "is_on": false,
+                "volume": 50,
+                "source": "bluetooth"
+            },
+            "location": "living_room",
+            "brand": "Sonos"
+        },
+        {
+            "device_id": "thermostat_living_room",
+            "device_type": "thermostat",
+            "device_name": "온도조절기",
+            "display_name": "온도조절기",
+            "capabilities": [
+                "temperature",
+                "mode"
+            ],
+            "current_state": {
+                "temperature": 22,
+                "mode": "auto"
+            },
+            "location": "living_room",
+            "brand": "Nest"
+        },
+        {
+            "device_id": "light_bedroom",
+            "device_type": "light",
+            "device_name": "침실 조명",
+            "display_name": "침실 조명",
+            "capabilities": [
+                "on_off",
+                "brightness"
+            ],
+            "current_state": {
+                "is_on": false,
+                "brightness": 60
+            },
+            "location": "bedroom",
+            "brand": "IKEA"
+        }
+    ],
+    "aoi_layout": {
+        "description": "Default 3-column grid layout for device AOIs",
+        "columns": 3,
+        "card_width": 640,
+        "card_height": 200
+    }
+}

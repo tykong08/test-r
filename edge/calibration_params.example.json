@@ -1,0 +1,87 @@
+{
+    "transform_matrix": [
+        [
+            1920.0,
+            0.0,
+            0.0
+        ],
+        [
+            0.0,
+            1080.0,
+            0.0
+        ]
+    ],
+    "translation": [
+        0.0,
+        0.0
+    ],
+    "calibration_points": [
+        {
+            "screen": [
+                192.0,
+                108.0
+            ],
+            "gaze": [
+                0.1,
+                0.1
+            ],
+            "timestamp": "2024-01-01T12:00:00"
+        },
+        {
+            "screen": [
+                1728.0,
+                108.0
+            ],
+            "gaze": [
+                0.9,
+                0.1
+            ],
+            "timestamp": "2024-01-01T12:00:03"
+        },
+        {
+            "screen": [
+                960.0,
+                540.0
+            ],
+            "gaze": [
+                0.5,
+                0.5
+            ],
+            "timestamp": "2024-01-01T12:00:06"
+        },
+        {
+            "screen": [
+                192.0,
+                972.0
+            ],
+            "gaze": [
+                0.1,
+                0.9
+            ],
+            "timestamp": "2024-01-01T12:00:09"
+        },
+        {
+            "screen": [
+                1728.0,
+                972.0
+            ],
+            "gaze": [
+                0.9,
+                0.9
+            ],
+            "timestamp": "2024-01-01T12:00:12"
+        }
+    ],
+    "screen_size": {
+        "width": 1920,
+        "height": 1080
+    },
+    "timestamp": "2024-01-01T12:00:15",
+    "calibration_quality": {
+        "average_error": 15.5,
+        "max_error": 32.1,
+        "points_collected": 5,
+        "status": "good"
+    },
+    "notes": "Mock calibration data for UI testing without actual camera calibration"
+}
