@@ -4,7 +4,13 @@ Check the README.md for complete documentation.
 """
 
 import cv2
-from gaze_tracking import GazeTracking
+import sys
+import os
+
+# Add edge directory to path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'edge'))
+
+from model.gaze_tracking import GazeTracking
 
 gaze = GazeTracking()
 webcam = cv2.VideoCapture(0)
