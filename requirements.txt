@@ -1,3 +1,8 @@
+# GazeHome Edge Device - Python Dependencies
+# ===========================================
+# 모든 환경 (macOS, Linux, Raspberry Pi)에서 동일하게 사용
+# dlib는 Dockerfile에서 빌드되므로 모든 플랫폼 지원
+
 # FastAPI and Web Server
 fastapi==0.104.1
 uvicorn[standard]==0.24.0
