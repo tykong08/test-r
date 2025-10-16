@@ -421,11 +421,11 @@ function drawGazePointer(ctx, x, y, scale = 1.0) {
     const radius = 12 * scale;  // 20에서 12로 축소
     const centerRadius = 3 * scale;  // 4에서 3으로 축소
 
-    // 외곽 원 (글로우 효과)
+    // 외곽 원 (글로우 효과) - 소프트 틸 색상
     const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius * 1.5);
-    gradient.addColorStop(0, 'rgba(0, 255, 0, 0.4)');
-    gradient.addColorStop(0.5, 'rgba(0, 255, 0, 0.2)');
-    gradient.addColorStop(1, 'rgba(0, 255, 0, 0)');
+    gradient.addColorStop(0, 'rgba(79, 209, 197, 0.4)');
+    gradient.addColorStop(0.5, 'rgba(79, 209, 197, 0.2)');
+    gradient.addColorStop(1, 'rgba(79, 209, 197, 0)');
 
     ctx.fillStyle = gradient;
     ctx.beginPath();
@@ -433,17 +433,17 @@ function drawGazePointer(ctx, x, y, scale = 1.0) {
     ctx.fill();
 
     // 메인 원
-    ctx.strokeStyle = '#00ff00';
+    ctx.strokeStyle = '#4fd1c5';
     ctx.lineWidth = 2 * scale;  // 3에서 2로 축소
-    ctx.shadowBlur = 10 * scale;  // 15에서 10으로 축소
-    ctx.shadowColor = '#00ff00';
+    ctx.shadowBlur = 8 * scale;  // 15에서 8로 축소
+    ctx.shadowColor = '#4fd1c5';
     ctx.beginPath();
     ctx.arc(x, y, radius, 0, Math.PI * 2);
     ctx.stroke();
 
     // 중심점
-    ctx.fillStyle = '#00ff00';
-    ctx.shadowBlur = 8 * scale;  // 10에서 8로 축소
+    ctx.fillStyle = '#4fd1c5';
+    ctx.shadowBlur = 6 * scale;  // 10에서 6으로 축소
     ctx.beginPath();
     ctx.arc(x, y, centerRadius, 0, Math.PI * 2);
     ctx.fill();
@@ -476,11 +476,11 @@ function updateDwellProgress(data) {
 function handleGazeClick(data) {
     console.log('Gaze click detected:', data);
 
-    // 시각적 피드백
+    // 시각적 피드백 (소프트 레드로 변경)
     const pointer = document.getElementById('gaze-pointer');
-    pointer.style.border = '3px solid #ff0000';
+    pointer.style.border = '2.5px solid #fc8181';
     setTimeout(() => {
-        pointer.style.border = '3px solid #00ff00';
+        pointer.style.border = '2.5px solid #4fd1c5';
     }, 200);
 
     // 기기 클릭된 경우
