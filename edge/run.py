@@ -35,9 +35,9 @@ def check_dependencies():
 
 def check_dlib_model():
     """Check if dlib model exists"""
-    model_path = Path(__file__).parent.parent / "gaze_tracking/trained_models/shape_predictor_68_face_landmarks.dat"
+    model_path = Path(__file__).parent / "model/trained_models/shape_predictor_68_face_landmarks.dat"
     if model_path.exists():
-        print(f"✅ dlib model found: {model_path}")
+        print(f"✅ dlib model found")
         return True
     else:
         print(f"⚠️  dlib model not found: {model_path}")
@@ -88,7 +88,7 @@ def run_app():
             sys.executable, "-m", "uvicorn",
             "app:app",
             "--host", "0.0.0.0",
-            "--port", "5000",
+            "--port", "8000",
             "--reload"
         ])
     except KeyboardInterrupt:
@@ -128,10 +128,9 @@ def main():
     print("\n✅ All checks passed (or ignored)!")
     print("\nStarting server...")
     print("\nOnce running, open browser to:")
-    print("  → http://localhost:5000")
-    print("\nMake sure these are running:")
-    print("  → Gateway:    http://localhost:8001")
-    print("  → AI Service: http://localhost:8000")
+    print("  → http://localhost:8000")
+    print("\nMake sure these are running (if not using mock mode):")
+    print("  → AI Service: http://localhost:8001")
     print("\nPress Ctrl+C to stop")
     print("="*60)
     
