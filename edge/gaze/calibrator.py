@@ -28,12 +28,13 @@ class GazeCalibrator:
         self.screen_height = screen_height
         
         # 5개의 캘리브레이션 타겟 위치 (정규화된 좌표 0-1)
+        # 7인치 화면에 최적화: 0.1/0.9 → 0.15/0.85로 조정하여 모서리 부담 감소
         self.target_positions = [
-            (0.1, 0.1),   # 왼쪽 상단
-            (0.9, 0.1),   # 오른쪽 상단
-            (0.5, 0.5),   # 중앙
-            (0.1, 0.9),   # 왼쪽 하단
-            (0.9, 0.9),   # 오른쪽 하단
+            (0.15, 0.15),   # 왼쪽 상단
+            (0.85, 0.15),   # 오른쪽 상단
+            (0.5, 0.5),     # 중앙
+            (0.15, 0.85),   # 왼쪽 하단
+            (0.85, 0.85),   # 오른쪽 하단
         ]
         
         # 각 타겟에 대해 수집된 샘플
@@ -48,9 +49,13 @@ class GazeCalibrator:
         self.is_calibrated = False
         
         # 샘플 수집 파라미터
-        self.min_samples_per_target = 30
+        self.min_samples_per_target = 30  # 30개 샘플 = 약 3초 (100ms 간격 기준)
         self.max_samples_per_target = 50
         self.stability_threshold = 0.05  # 안정적인 샘플의 최대 표준편차
+        
+        # 7인치 작은 화면에서는 더 엄격한 안정성 필터링 필요
+        if screen_width <= 800:
+            self.stability_threshold = 0.04  # 작은 화면에서 더 정밀하게
     
     def get_current_target_position(self) -> Tuple[int, int]:
         """화면 좌표에서 현재 캘리브레이션 타겟 위치 가져오기"""

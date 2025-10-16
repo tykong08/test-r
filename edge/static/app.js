@@ -350,9 +350,27 @@ function updateCalibrationUI(progress) {
     document.getElementById('sample-required').textContent = progress.required_samples;
     document.getElementById('current-point').textContent = (progress.current_target || 0) + 1;
 
-    // Update instruction
+    // 타겟 애니메이션: 샘플이 충분히 수집되면 펄스 효과
+    if (percentage >= 100) {
+        target.style.animation = 'pulse-success 0.5s ease-in-out';
+    } else if (percentage >= 75) {
+        target.style.background = 'radial-gradient(circle, rgba(79, 209, 197, 1) 0%, rgba(255, 87, 87, 1) 100%)';
+    } else {
+        target.style.background = 'radial-gradient(circle, #ff5757 0%, #ff0000 100%)';
+        target.style.animation = '';
+    }
+
+    // Update instruction - 진행 상황에 따라 더 자세한 피드백
     const instruction = document.getElementById('calibration-instruction');
-    instruction.textContent = `타겟 ${(progress.current_target || 0) + 1} / ${progress.total_targets || 5} - 빨간 점을 응시하세요`;
+    if (percentage < 30) {
+        instruction.textContent = `타겟 ${(progress.current_target || 0) + 1} / ${progress.total_targets || 5} - 빨간 점을 응시하세요`;
+    } else if (percentage < 70) {
+        instruction.textContent = `타겟 ${(progress.current_target || 0) + 1} / ${progress.total_targets || 5} - 계속 응시해주세요... 👀`;
+    } else if (percentage < 100) {
+        instruction.textContent = `타겟 ${(progress.current_target || 0) + 1} / ${progress.total_targets || 5} - 거의 완료! 조금만 더... ✨`;
+    } else {
+        instruction.textContent = `타겟 ${(progress.current_target || 0) + 1} / ${progress.total_targets || 5} - 완료! 다음 타겟으로... ✓`;
+    }
 }
 
 // 시선 포인터 업데이트
