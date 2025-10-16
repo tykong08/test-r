@@ -1,3 +1,6 @@
+"""
+동공 감지 임계값 자동 보정 - 개인별/환경별 최적 threshold 값 계산
+"""
 from __future__ import division
 import cv2
 from .pupil import Pupil

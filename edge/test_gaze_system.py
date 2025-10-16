@@ -1,6 +1,5 @@
 """
-Gaze Tracking and Calibration Test Script
-Tests webcam, gaze tracking, and calibration functionality
+시선 추적 시스템 통합 테스트 - 웹캠, 보정, 클릭 감지 검증
 """
 import cv2
 import sys

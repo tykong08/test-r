@@ -1,3 +1,6 @@
+"""
+동공 위치 감지 - 이진화 및 윤곽선 검출로 동공 중심 좌표 계산
+"""
 import numpy as np
 import cv2
 

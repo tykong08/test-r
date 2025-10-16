@@ -1,5 +1,5 @@
 """
-Mock data for UI testing without real servers
+Mock 데이터 - 실제 서버 없이 UI 테스트용 가상 디바이스 및 추천 데이터
 """
 import random
 from datetime import datetime

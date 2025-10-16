@@ -1,3 +1,6 @@
+"""
+시선 추적 메인 클래스 - dlib 기반 얼굴/눈 감지 및 동공 위치 추적
+"""
 from __future__ import division
 import os
 import cv2

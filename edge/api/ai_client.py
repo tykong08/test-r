@@ -1,6 +1,5 @@
 """
-AI Service API Client
-Handles communication with AI server for recommendations and intent processing
+AI 서비스 HTTP 클라이언트 - 추천 요청 및 응답 처리
 """
 import aiohttp
 import asyncio

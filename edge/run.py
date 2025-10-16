@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """
-GazeHome Edge Device Runner
-Quick start script with pre-flight checks
+서버 실행 스크립트 - 환경 체크 및 FastAPI 서버 시작
 """
 import sys
 import subprocess

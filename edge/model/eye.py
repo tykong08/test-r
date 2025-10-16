@@ -1,3 +1,6 @@
+"""
+눈 영역 분리 및 동공 감지 - 얼굴 랜드마크에서 눈 영역 추출
+"""
 import math
 import numpy as np
 import cv2

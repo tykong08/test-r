@@ -1,6 +1,5 @@
 """
-Test script for Edge Device
-Tests basic functionality without requiring full server setup
+Edge Device 기능 테스트 - 설정 로딩, 보정, API 클라이언트 검증
 """
 import asyncio
 import json
