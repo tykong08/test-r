@@ -28,14 +28,9 @@
             <button id="calibrate-btn" class="btn btn-primary">시선 보정 시작</button>
             <button id="refresh-btn" class="btn btn-secondary">기기 새로고침</button>
 
-            <div class="dwell-time-setting">
-                <label for="dwell-time-slider">응시 시간: <span id="dwell-time-value">0.8</span>초</label>
-                <input type="range" id="dwell-time-slider" min="0.3" max="2.0" step="0.1" value="0.8">
-                <p class="setting-hint">응시 또는 깜빡임으로 클릭 가능</p>
-            </div>
-
             <div class="info">
                 <span id="user-uuid">사용자: {{ request.scope.get('user_uuid', 'Loading...') }}</span>
+                <p class="setting-hint">응시 또는 깜빡임으로 클릭 가능</p>
             </div>
         </div>
 
@@ -62,6 +57,14 @@
                     포인트: <span id="current-point">1</span> / 5 |
                     샘플: <span id="sample-count">0</span> / <span id="sample-required">30</span>
                 </p>
+
+                <!-- Calibration Settings -->
+                <div class="calibration-settings">
+                    <label for="dwell-time-slider">응시 민감도: <span id="dwell-time-value">0.8</span>초</label>
+                    <input type="range" id="dwell-time-slider" min="0.3" max="2.0" step="0.1" value="0.8">
+                    <p class="setting-hint">짧을수록 빠르게 반응 (권장: 0.8초)</p>
+                </div>
+
                 <button id="skip-calibration" class="btn btn-secondary">건너뛰기</button>
             </div>
         </div>

@@ -9,10 +9,8 @@ import logging
 from typing import Optional, Tuple, Callable, Dict, List
 import numpy as np
 
-# Add parent directory to path to import gaze_tracking
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
-
-from gaze_tracking import GazeTracking
+# Import from model directory
+from model.gaze_tracking import GazeTracking
 from .calibrator import GazeCalibrator
 
 logger = logging.getLogger(__name__)
