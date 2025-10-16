@@ -86,40 +86,6 @@ function setupEventListeners() {
     // Recommendation buttons
     document.getElementById('rec-yes-btn').addEventListener('click', () => respondToRecommendation('YES'));
     document.getElementById('rec-no-btn').addEventListener('click', () => respondToRecommendation('NO'));
-
-    // Dwell-time slider
-    const dwellSlider = document.getElementById('dwell-time-slider');
-    const dwellValue = document.getElementById('dwell-time-value');
-
-    dwellSlider.addEventListener('input', (e) => {
-        const value = parseFloat(e.target.value);
-        dwellValue.textContent = value.toFixed(1);
-    });
-
-    dwellSlider.addEventListener('change', async (e) => {
-        const value = parseFloat(e.target.value);
-        await updateDwellTime(value);
-    });
-}
-
-async function updateDwellTime(dwellTime) {
-    try {
-        const response = await fetch('/api/dwell-time', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ dwell_time: dwellTime })
-        });
-
-        if (response.ok) {
-            console.log(`Dwell time updated to ${dwellTime}s`);
-        } else {
-            console.error('Failed to update dwell time');
-        }
-    } catch (error) {
-        console.error('Error updating dwell time:', error);
-    }
 }
 
 async function fetchState() {
