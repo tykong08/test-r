@@ -5,7 +5,7 @@ import random
 from datetime import datetime
 
 
-# Mock device list - 2 devices for testing
+# Mock 디바이스 목록 - 테스트용 2개 디바이스
 MOCK_DEVICES = [
     {
         "device_id": "ac_living_room",
@@ -43,7 +43,7 @@ MOCK_DEVICES = [
 ]
 
 
-# Mock recommendations
+# Mock 추천 목록
 MOCK_RECOMMENDATIONS = [
     {
         "recommendation_id": "rec_001",
@@ -84,7 +84,7 @@ MOCK_RECOMMENDATIONS = [
 
 
 class MockAIClient:
-    """Mock AI Service client for testing"""
+    """테스트용 Mock AI 서비스 클라이언트"""
     
     def __init__(self, base_url: str, user_uuid: str):
         self.base_url = base_url
@@ -99,12 +99,12 @@ class MockAIClient:
         pass
     
     async def get_devices(self):
-        """Return mock devices"""
+        """Mock 디바이스 반환"""
         return MOCK_DEVICES.copy()
     
     async def send_device_click(self, device_info: dict, context: dict = None):
-        """Return mock recommendation for clicked device"""
-        # Find recommendation for this device
+        """클릭된 디바이스에 대한 Mock 추천 반환"""
+        # 이 디바이스에 대한 추천 찾기
         rec = None
         for r in MOCK_RECOMMENDATIONS:
             if r['device_id'] == device_info.get('device_id'):
@@ -112,7 +112,7 @@ class MockAIClient:
                 break
         
         if not rec:
-            # Generic recommendation
+            # 일반 추천
             rec = {
                 "recommendation_id": f"rec_{random.randint(100, 999)}",
                 "device_id": device_info.get('device_id'),
@@ -134,8 +134,8 @@ class MockAIClient:
         }
     
     async def poll_recommendation(self):
-        """Return mock recommendation periodically"""
-        # Return recommendation every 5 calls (simulating periodic polling)
+        """주기적으로 Mock 추천 반환"""
+        # 10번 호출마다 추천 반환 (주기적 폴링 시뮬레이션)
         self.recommendation_index += 1
         if self.recommendation_index % 10 == 0:
             rec = random.choice(MOCK_RECOMMENDATIONS)
@@ -143,7 +143,7 @@ class MockAIClient:
         return None
     
     async def respond_to_recommendation(self, recommendation_id: str, answer: str, device_id: str = None):
-        """Mock response to recommendation"""
+        """추천에 대한 Mock 응답"""
         return {
             "status": "success",
             "message": f"Recommendation {answer}",
@@ -151,8 +151,8 @@ class MockAIClient:
         }
     
     async def control_device(self, device_id: str, action: str, parameters: dict = None):
-        """Mock device control - update device state"""
-        # Find device and toggle state
+        """Mock 디바이스 제어 - 디바이스 상태 업데이트"""
+        # 디바이스를 찾아 상태 토글
         for device in MOCK_DEVICES:
             if device['device_id'] == device_id:
                 state = device['current_state']
@@ -181,5 +181,5 @@ class MockAIClient:
         }
     
     async def health_check(self):
-        """Always healthy in mock mode"""
+        """Mock 모드에서는 항상 정상"""
         return True
