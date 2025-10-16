@@ -418,8 +418,8 @@ function updateGazePointer(data) {
 
 // Canvas에 시선 포인터 그리기
 function drawGazePointer(ctx, x, y, scale = 1.0) {
-    const radius = 20 * scale;
-    const centerRadius = 4 * scale;
+    const radius = 12 * scale;  // 20에서 12로 축소
+    const centerRadius = 3 * scale;  // 4에서 3으로 축소
 
     // 외곽 원 (글로우 효과)
     const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius * 1.5);
@@ -434,8 +434,8 @@ function drawGazePointer(ctx, x, y, scale = 1.0) {
 
     // 메인 원
     ctx.strokeStyle = '#00ff00';
-    ctx.lineWidth = 3 * scale;
-    ctx.shadowBlur = 15 * scale;
+    ctx.lineWidth = 2 * scale;  // 3에서 2로 축소
+    ctx.shadowBlur = 10 * scale;  // 15에서 10으로 축소
     ctx.shadowColor = '#00ff00';
     ctx.beginPath();
     ctx.arc(x, y, radius, 0, Math.PI * 2);
@@ -443,7 +443,7 @@ function drawGazePointer(ctx, x, y, scale = 1.0) {
 
     // 중심점
     ctx.fillStyle = '#00ff00';
-    ctx.shadowBlur = 10 * scale;
+    ctx.shadowBlur = 8 * scale;  // 10에서 8로 축소
     ctx.beginPath();
     ctx.arc(x, y, centerRadius, 0, Math.PI * 2);
     ctx.fill();
