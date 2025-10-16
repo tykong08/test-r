@@ -75,6 +75,15 @@ class GazeTracking(object):
             x = self.eye_right.origin[0] + self.eye_right.pupil.x
             y = self.eye_right.origin[1] + self.eye_right.pupil.y
             return (x, y)
+    
+    def pupil_center_coords(self):
+        """Returns the coordinates of the center point between both pupils"""
+        if self.pupils_located:
+            left = self.pupil_left_coords()
+            right = self.pupil_right_coords()
+            center_x = int((left[0] + right[0]) / 2)
+            center_y = int((left[1] + right[1]) / 2)
+            return (center_x, center_y)
 
     def horizontal_ratio(self):
         """Returns a number between 0.0 and 1.0 that indicates the
@@ -123,11 +132,12 @@ class GazeTracking(object):
 
         if self.pupils_located:
             color = (0, 255, 0)
-            x_left, y_left = self.pupil_left_coords()
-            x_right, y_right = self.pupil_right_coords()
-            cv2.line(frame, (x_left - 5, y_left), (x_left + 5, y_left), color)
-            cv2.line(frame, (x_left, y_left - 5), (x_left, y_left + 5), color)
-            cv2.line(frame, (x_right - 5, y_right), (x_right + 5, y_right), color)
-            cv2.line(frame, (x_right, y_right - 5), (x_right, y_right + 5), color)
+            # 두 눈의 중간점만 표시
+            center_x, center_y = self.pupil_center_coords()
+            # 십자선으로 중간점 표시
+            cv2.line(frame, (center_x - 8, center_y), (center_x + 8, center_y), color, 2)
+            cv2.line(frame, (center_x, center_y - 8), (center_x, center_y + 8), color, 2)
+            # 중심에 원 추가
+            cv2.circle(frame, (center_x, center_y), 4, color, -1)
 
         return frame
