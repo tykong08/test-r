@@ -9,7 +9,7 @@ from pathlib import Path
 
 
 def check_python_version():
-    """Check Python version"""
+    """Python 버전 확인"""
     if sys.version_info < (3, 8):
         print("❌ Python 3.8+ required")
         print(f"   Current version: {sys.version}")
@@ -19,7 +19,7 @@ def check_python_version():
 
 
 def check_dependencies():
-    """Check if dependencies are installed"""
+    """의존성 패키지 설치 여부 확인"""
     try:
         import cv2
         import numpy
@@ -34,7 +34,7 @@ def check_dependencies():
 
 
 def check_dlib_model():
-    """Check if dlib model exists"""
+    """dlib 모델 존재 여부 확인"""
     model_path = Path(__file__).parent / "model/trained_models/shape_predictor_68_face_landmarks.dat"
     if model_path.exists():
         print(f"✅ dlib model found")
@@ -46,7 +46,7 @@ def check_dlib_model():
 
 
 def check_config():
-    """Check if config exists"""
+    """config 파일 존재 여부 확인"""
     config_path = Path(__file__).parent / "config.json"
     if config_path.exists():
         print(f"✅ Configuration found: {config_path}")
@@ -57,7 +57,7 @@ def check_config():
 
 
 def check_camera():
-    """Check if camera is available"""
+    """카메라 사용 가능 여부 확인"""
     try:
         import cv2
         cam = cv2.VideoCapture(0)
@@ -67,22 +67,22 @@ def check_camera():
             return True
         else:
             print("⚠️  Camera not available (will try to open anyway)")
-            return True  # Don't fail, might work later
+            return True  # 실패하지 않음, 나중에 작동할 수 있음
     except Exception as e:
         print(f"⚠️  Camera check failed: {e}")
-        return True  # Don't fail
+        return True  # 실패하지 않음
 
 
 def run_app():
-    """Run the application"""
+    """애플리케이션 실행"""
     print("\n" + "="*60)
     print("Starting GazeHome Edge Device...")
     print("="*60 + "\n")
     
-    # Change to edge directory
+    # edge 디렉토리로 변경
     os.chdir(Path(__file__).parent)
     
-    # Run with uvicorn
+    # uvicorn으로 실행
     try:
         subprocess.run([
             sys.executable, "-m", "uvicorn",

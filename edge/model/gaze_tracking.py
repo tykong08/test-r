@@ -11,9 +11,8 @@ from .calibration import Calibration
 
 class GazeTracking(object):
     """
-    This class tracks the user's gaze.
-    It provides useful information like the position of the eyes
-    and pupils and allows to know if the eyes are open or closed
+    사용자의 시선을 추적하는 클래스
+    눈과 동공의 위치 등 유용한 정보를 제공하고 눈이 열려 있는지 닫혀 있는지 알 수 있습니다
     """
 
     def __init__(self):
@@ -22,17 +21,17 @@ class GazeTracking(object):
         self.eye_right = None
         self.calibration = Calibration()
 
-        # _face_detector is used to detect faces
+        # _face_detector는 얼굴을 감지하는 데 사용됩니다
         self._face_detector = dlib.get_frontal_face_detector()
 
-        # _predictor is used to get facial landmarks of a given face
+        # _predictor는 주어진 얼굴의 랜드마크를 가져오는 데 사용됩니다
         cwd = os.path.abspath(os.path.dirname(__file__))
         model_path = os.path.abspath(os.path.join(cwd, "trained_models/shape_predictor_68_face_landmarks.dat"))
         self._predictor = dlib.shape_predictor(model_path)
 
     @property
     def pupils_located(self):
-        """Check that the pupils have been located"""
+        """동공이 위치했는지 확인"""
         try:
             int(self.eye_left.pupil.x)
             int(self.eye_left.pupil.y)
@@ -43,7 +42,7 @@ class GazeTracking(object):
             return False
 
     def _analyze(self):
-        """Detects the face and initialize Eye objects"""
+        """얼굴을 감지하고 Eye 객체를 초기화"""
         frame = cv2.cvtColor(self.frame, cv2.COLOR_BGR2GRAY)
         faces = self._face_detector(frame)
 
@@ -57,30 +56,30 @@ class GazeTracking(object):
             self.eye_right = None
 
     def refresh(self, frame):
-        """Refreshes the frame and analyzes it.
+        """프레임을 새로고침하고 분석합니다
 
         Arguments:
-            frame (numpy.ndarray): The frame to analyze
+            frame (numpy.ndarray): 분석할 프레임
         """
         self.frame = frame
         self._analyze()
 
     def pupil_left_coords(self):
-        """Returns the coordinates of the left pupil"""
+        """왼쪽 동공의 좌표 반환"""
         if self.pupils_located:
             x = self.eye_left.origin[0] + self.eye_left.pupil.x
             y = self.eye_left.origin[1] + self.eye_left.pupil.y
             return (x, y)
 
     def pupil_right_coords(self):
-        """Returns the coordinates of the right pupil"""
+        """오른쪽 동공의 좌표 반환"""
         if self.pupils_located:
             x = self.eye_right.origin[0] + self.eye_right.pupil.x
             y = self.eye_right.origin[1] + self.eye_right.pupil.y
             return (x, y)
     
     def pupil_center_coords(self):
-        """Returns the coordinates of the center point between both pupils"""
+        """두 동공 사이의 중심점 좌표 반환"""
         if self.pupils_located:
             left = self.pupil_left_coords()
             right = self.pupil_right_coords()
@@ -89,9 +88,8 @@ class GazeTracking(object):
             return (center_x, center_y)
 
     def horizontal_ratio(self):
-        """Returns a number between 0.0 and 1.0 that indicates the
-        horizontal direction of the gaze. The extreme right is 0.0,
-        the center is 0.5 and the extreme left is 1.0
+        """시선의 수평 방향을 나타내는 0.0과 1.0 사이의 숫자 반환
+        가장 오른쪽은 0.0, 중앙은 0.5, 가장 왼쪽은 1.0입니다
         """
         if self.pupils_located:
             pupil_left = self.eye_left.pupil.x / (self.eye_left.center[0] * 2 - 10)
@@ -99,9 +97,8 @@ class GazeTracking(object):
             return (pupil_left + pupil_right) / 2
 
     def vertical_ratio(self):
-        """Returns a number between 0.0 and 1.0 that indicates the
-        vertical direction of the gaze. The extreme top is 0.0,
-        the center is 0.5 and the extreme bottom is 1.0
+        """시선의 수직 방향을 나타내는 0.0과 1.0 사이의 숫자 반환
+        가장 위는 0.0, 중앙은 0.5, 가장 아래는 1.0입니다
         """
         if self.pupils_located:
             pupil_left = self.eye_left.pupil.y / (self.eye_left.center[1] * 2 - 10)
@@ -109,28 +106,28 @@ class GazeTracking(object):
             return (pupil_left + pupil_right) / 2
 
     def is_right(self):
-        """Returns true if the user is looking to the right"""
+        """사용자가 오른쪽을 보고 있으면 True 반환"""
         if self.pupils_located:
             return self.horizontal_ratio() <= 0.35
 
     def is_left(self):
-        """Returns true if the user is looking to the left"""
+        """사용자가 왼쪽을 보고 있으면 True 반환"""
         if self.pupils_located:
             return self.horizontal_ratio() >= 0.65
 
     def is_center(self):
-        """Returns true if the user is looking to the center"""
+        """사용자가 중앙을 보고 있으면 True 반환"""
         if self.pupils_located:
             return self.is_right() is not True and self.is_left() is not True
 
     def is_blinking(self):
-        """Returns true if the user closes his eyes"""
+        """사용자가 눈을 감으면 True 반환"""
         if self.pupils_located:
             blinking_ratio = (self.eye_left.blinking + self.eye_right.blinking) / 2
             return blinking_ratio > 3.8
 
     def annotated_frame(self):
-        """Returns the main frame with pupils highlighted"""
+        """동공이 강조 표시된 메인 프레임 반환"""
         frame = self.frame.copy()
 
         if self.pupils_located:

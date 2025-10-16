@@ -7,8 +7,7 @@ import cv2
 
 class Pupil(object):
     """
-    This class detects the iris of an eye and estimates
-    the position of the pupil
+    눈의 홍채를 감지하고 동공의 위치를 추정하는 클래스
     """
 
     def __init__(self, eye_frame, threshold):
@@ -21,14 +20,14 @@ class Pupil(object):
 
     @staticmethod
     def image_processing(eye_frame, threshold):
-        """Performs operations on the eye frame to isolate the iris
+        """홍채를 분리하기 위해 눈 프레임에 작업 수행
 
         Arguments:
-            eye_frame (numpy.ndarray): Frame containing an eye and nothing else
-            threshold (int): Threshold value used to binarize the eye frame
+            eye_frame (numpy.ndarray): 눈만 포함된 프레임
+            threshold (int): 눈 프레임을 이진화하는 데 사용되는 임계값
 
         Returns:
-            A frame with a single element representing the iris
+            홍채를 나타내는 단일 요소가 있는 프레임
         """
         kernel = np.ones((3, 3), np.uint8)
         new_frame = cv2.bilateralFilter(eye_frame, 10, 15, 15)
@@ -38,11 +37,10 @@ class Pupil(object):
         return new_frame
 
     def detect_iris(self, eye_frame):
-        """Detects the iris and estimates the position of the iris by
-        calculating the centroid.
+        """홍채를 감지하고 중심점을 계산하여 홍채의 위치 추정
 
         Arguments:
-            eye_frame (numpy.ndarray): Frame containing an eye and nothing else
+            eye_frame (numpy.ndarray): 눈만 포함된 프레임
         """
         self.iris_frame = self.image_processing(eye_frame, self.threshold)
 
