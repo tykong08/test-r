@@ -36,7 +36,7 @@ import numpy as np
 from core.config import config
 from gaze.tracker import GazeTracker
 from api.ai_client import AIServiceClient
-from mock_data import MockAIClient
+from mock.mock_data import MockAIClient
 
 # Configure logging
 logging.basicConfig(
