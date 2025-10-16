@@ -81,6 +81,21 @@ class Config:
         return self.config.get("gaze", {}).get("camera_index", 0)
     
     @property
+    def camera_width(self) -> int:
+        """카메라 해상도 너비 가져오기 (HD 웹캠: 1280x720)"""
+        return self.config.get("gaze", {}).get("camera_width", 1280)
+    
+    @property
+    def camera_height(self) -> int:
+        """카메라 해상도 높이 가져오기 (HD 웹캠: 1280x720)"""
+        return self.config.get("gaze", {}).get("camera_height", 720)
+    
+    @property
+    def camera_fps(self) -> int:
+        """카메라 FPS 가져오기"""
+        return self.config.get("gaze", {}).get("camera_fps", 30)
+    
+    @property
     def calibration_file(self) -> Path:
         """캘리브레이션 파일 경로 가져오기"""
         filename = self.config.get("calibration_file", "calibration_params.json")
@@ -100,6 +115,16 @@ class Config:
     def mock_mode(self) -> bool:
         """Mock 모드 설정 가져오기"""
         return self.config.get("mock_mode", False)
+    
+    @property
+    def device_type(self) -> str:
+        """디바이스 타입 가져오기 (raspberry_pi, desktop 등)"""
+        return self.config.get("device", {}).get("type", "desktop")
+    
+    @property
+    def is_raspberry_pi(self) -> bool:
+        """라즈베리 파이 여부 확인"""
+        return self.device_type == "raspberry_pi"
     
     @property
     def config_data(self) -> Dict[str, Any]:

@@ -1,4 +1,5 @@
 /* GazeHome Edge Device Styles - Eye-Friendly Design */
+/* Optimized for Raspberry Pi 7-inch Display (800x480) */
 
 * {
     margin: 0;
@@ -12,20 +13,21 @@ body {
     color: #2d3748;
     overflow-x: hidden;
     line-height: 1.6;
+    font-size: 14px; /* 작은 화면에 맞춰 기본 폰트 크기 축소 */
 }
 
 .container {
-    max-width: 1400px;
+    max-width: 100%; /* 7인치 화면에 맞춰 전체 너비 사용 */
     margin: 0 auto;
-    padding: 20px;
+    padding: 12px; /* 패딩 축소 */
 }
 
 /* Header */
 .header {
     background: white;
-    border-radius: 16px;
-    padding: 24px 32px;
-    margin-bottom: 24px;
+    border-radius: 12px;
+    padding: 12px 16px; /* 패딩 축소 */
+    margin-bottom: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
     display: flex;
     justify-content: space-between;
@@ -34,7 +36,7 @@ body {
 }
 
 .header h1 {
-    font-size: 26px;
+    font-size: 18px; /* 7인치 화면에 맞춰 축소 */
     color: #4c51bf;
     font-weight: 600;
     letter-spacing: -0.5px;
@@ -46,9 +48,9 @@ body {
 }
 
 .badge {
-    padding: 8px 16px;
-    border-radius: 24px;
-    font-size: 13px;
+    padding: 6px 12px; /* 작은 화면용 축소 */
+    border-radius: 20px;
+    font-size: 11px;
     font-weight: 500;
     background: #edf2f7;
     color: #4a5568;
@@ -66,10 +68,11 @@ body {
 }
 
 /* Gaze Pointer - Full Screen (Softer, Eye-Friendly) */
+/* 7인치 화면용으로 약간 축소 */
 .gaze-pointer {
     position: fixed;
-    width: 28px;
-    height: 28px;
+    width: 24px; /* 28px → 24px */
+    height: 24px;
     border: 2.5px solid #4fd1c5;
     border-radius: 50%;
     pointer-events: none;
@@ -161,15 +164,16 @@ body {
 }
 
 /* Control Panel */
+/* Control Panel - 7인치 화면 최적화 */
 .control-panel {
     background: white;
-    border-radius: 16px;
-    padding: 24px 28px;
-    margin-bottom: 24px;
+    border-radius: 12px;
+    padding: 12px 16px; /* 24px 28px → 12px 16px */
+    margin-bottom: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
     border: 1px solid rgba(203, 213, 224, 0.3);
     display: flex;
-    gap: 16px;
+    gap: 10px; /* 16px → 10px */
     align-items: center;
     flex-wrap: wrap;
 }
@@ -236,11 +240,12 @@ body {
     margin: 5px 0 0 0;
 }
 
+/* 버튼 - 7인치 화면용 */
 .btn {
-    padding: 12px 24px;
+    padding: 10px 18px; /* 12px 24px → 10px 18px */
     border: none;
-    border-radius: 10px;
-    font-size: 14px;
+    border-radius: 8px;
+    font-size: 13px; /* 14px → 13px */
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -451,16 +456,17 @@ body {
 }
 
 /* Device Grid */
+/* Device Grid - 7인치 화면 최적화 */
 .device-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 24px;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); /* 320px → 180px */
+    gap: 12px; /* 24px → 12px */
 }
 
 .device-card {
     background: white;
-    border-radius: 16px;
-    padding: 24px;
+    border-radius: 12px;
+    padding: 16px; /* 24px → 16px */
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
     border: 1px solid rgba(203, 213, 224, 0.3);
     transition: all 0.2s ease;
@@ -474,16 +480,16 @@ body {
 }
 
 .device-card h3 {
-    font-size: 19px;
-    margin-bottom: 8px;
+    font-size: 15px; /* 19px → 15px */
+    margin-bottom: 6px;
     color: #2d3748;
     font-weight: 600;
 }
 
 .device-card .device-type {
-    font-size: 14px;
+    font-size: 12px; /* 14px → 12px */
     color: #718096;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
     font-weight: 500;
 }
 
@@ -672,6 +678,7 @@ body {
         height: 20px;
         opacity: 1;
     }
+
     100% {
         width: 80px;
         height: 80px;
@@ -684,6 +691,7 @@ body {
         transform: translateX(400px);
         opacity: 0;
     }
+
     to {
         transform: translateX(0);
         opacity: 1;
@@ -695,6 +703,7 @@ body {
         transform: translateX(0);
         opacity: 1;
     }
+
     to {
         transform: translateX(400px);
         opacity: 0;

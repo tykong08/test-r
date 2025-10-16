@@ -5,13 +5,21 @@
     "gaze": {
         "dwell_time": 1.0,
         "calibration_points": 5,
-        "screen_width": 1920,
-        "screen_height": 1080,
-        "camera_index": 0
+        "screen_width": 800,
+        "screen_height": 480,
+        "camera_index": 0,
+        "camera_width": 1280,
+        "camera_height": 720,
+        "camera_fps": 30
     },
     "polling": {
         "device_status_interval": 5.0,
         "recommendation_interval": 3.0
     },
-    "calibration_file": "calibration_params.json"
+    "calibration_file": "calibration_params.json",
+    "device": {
+        "type": "raspberry_pi",
+        "display": "7inch",
+        "camera": "hd_webcam"
+    }
 }

@@ -124,7 +124,7 @@ async def initialize_services():
             logger.error("AI Service is not available")
             raise Exception("AI Service connection failed")
     
-    # 카메라 초기화
+    # 카메라 초기화 (라즈베리 파이 7인치 + HD 웹캠 최적화)
     logger.info(f"Opening camera at index {config.camera_index}...")
     camera = cv2.VideoCapture(config.camera_index)
     
@@ -133,7 +133,22 @@ async def initialize_services():
         logger.info("Try changing camera_index in config.json (0, 1, or 2)")
         # 예외 발생시키지 않음 - 디버깅을 위해 서버 시작 허용
     else:
+        # HD 웹캠 설정 적용 (1280x720 @ 30fps)
+        camera.set(cv2.CAP_PROP_FRAME_WIDTH, config.camera_width)
+        camera.set(cv2.CAP_PROP_FRAME_HEIGHT, config.camera_height)
+        camera.set(cv2.CAP_PROP_FPS, config.camera_fps)
+        
+        # 실제 적용된 값 확인
+        actual_width = int(camera.get(cv2.CAP_PROP_FRAME_WIDTH))
+        actual_height = int(camera.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        actual_fps = int(camera.get(cv2.CAP_PROP_FPS))
+        
         logger.info(f"✅ Camera opened successfully at index {config.camera_index}")
+        logger.info(f"📹 Camera resolution: {actual_width}x{actual_height} @ {actual_fps}fps")
+        logger.info(f"🖥️  Display resolution: {config.screen_width}x{config.screen_height}")
+        
+        if config.is_raspberry_pi:
+            logger.info(f"🍓 Raspberry Pi mode with 7-inch display")
     
     # 시선 추적기 초기화
     # click_mode='both'는 응시(dwell)와 깜빡임(blink) 감지 모두 활성화
