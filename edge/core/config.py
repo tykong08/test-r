@@ -36,7 +36,7 @@ class Config:
         self.config = self.load_config()
     
     def load_config(self) -> Dict[str, Any]:
-        """Load configuration from JSON file"""
+        """JSON 파일에서 설정 로드"""
         try:
             with open(self.config_path, 'r', encoding='utf-8') as f:
                 return json.load(f)
@@ -46,66 +46,66 @@ class Config:
             raise ValueError(f"Invalid JSON in configuration file: {e}")
     
     def save_config(self):
-        """Save configuration to JSON file"""
+        """설정을 JSON 파일에 저장"""
         with open(self.config_path, 'w', encoding='utf-8') as f:
             json.dump(self.config, f, indent=2, ensure_ascii=False)
     
     @property
     def user_uuid(self) -> str:
-        """Get user UUID"""
+        """사용자 UUID 가져오기"""
         return self.config.get("user_uuid", "")
     
     @property
     def ai_service_url(self) -> str:
-        """Get AI service URL"""
+        """AI 서비스 URL 가져오기"""
         return self.config.get("ai_service_url", "http://localhost:8001")
     
     @property
     def dwell_time(self) -> float:
-        """Get dwell time for gaze click"""
+        """시선 클릭을 위한 응시 시간 가져오기"""
         return self.config.get("gaze", {}).get("dwell_time", 0.8)
     
     @property
     def screen_width(self) -> int:
-        """Get screen width"""
+        """화면 너비 가져오기"""
         return self.config.get("gaze", {}).get("screen_width", 1920)
     
     @property
     def screen_height(self) -> int:
-        """Get screen height"""
+        """화면 높이 가져오기"""
         return self.config.get("gaze", {}).get("screen_height", 1080)
     
     @property
     def camera_index(self) -> int:
-        """Get camera index"""
+        """카메라 인덱스 가져오기"""
         return self.config.get("gaze", {}).get("camera_index", 0)
     
     @property
     def calibration_file(self) -> Path:
-        """Get calibration file path"""
+        """캘리브레이션 파일 경로 가져오기"""
         filename = self.config.get("calibration_file", "calibration_params.json")
         return Path(__file__).parent.parent / filename
     
     @property
     def device_status_interval(self) -> float:
-        """Get device status polling interval"""
+        """디바이스 상태 폴링 간격 가져오기"""
         return self.config.get("polling", {}).get("device_status_interval", 5.0)
     
     @property
     def recommendation_interval(self) -> float:
-        """Get recommendation polling interval"""
+        """추천 폴링 간격 가져오기"""
         return self.config.get("polling", {}).get("recommendation_interval", 3.0)
     
     @property
     def mock_mode(self) -> bool:
-        """Get mock mode setting"""
+        """Mock 모드 설정 가져오기"""
         return self.config.get("mock_mode", False)
     
     @property
     def config_data(self) -> Dict[str, Any]:
-        """Get raw config data"""
+        """원시 설정 데이터 가져오기"""
         return self.config
 
 
-# Global config instance
+# 전역 설정 인스턴스
 config = Config()

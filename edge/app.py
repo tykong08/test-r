@@ -58,36 +58,36 @@ background_tasks = set()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Lifespan event handler for startup and shutdown"""
-    # Startup
+    """서버 시작 및 종료 시 실행되는 이벤트 핸들러"""
+    # 시작
     await initialize_services()
     
-    # Start background tasks
+    # 백그라운드 작업 시작
     task1 = asyncio.create_task(device_polling_task())
     task2 = asyncio.create_task(recommendation_polling_task())
     
     background_tasks.add(task1)
     background_tasks.add(task2)
     
-    # Refresh devices immediately
+    # 디바이스 즉시 새로고침
     await refresh_devices()
     
     logger.info("✅ Server ready at http://localhost:8000")
     
     yield
     
-    # Shutdown
+    # 종료
     global camera
     
-    # Cancel background tasks
+    # 백그라운드 작업 취소
     for task in background_tasks:
         task.cancel()
     
-    # Close camera
+    # 카메라 닫기
     if camera:
         camera.release()
     
-    # Close AI Service client
+    # AI 서비스 클라이언트 닫기
     if ai_client and ai_client.session:
         await ai_client.session.close()
     
@@ -105,47 +105,47 @@ app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
 
 
 async def initialize_services():
-    """Initialize all required services"""
+    """모든 필수 서비스 초기화"""
     global ai_client, gaze_tracker, devices_cache, camera
     
     logger.info("Initializing GazeHome Edge Device...")
     
-    # Initialize AI Service client (mock or real)
+    # AI 서비스 클라이언트 초기화 (mock 또는 실제)
     if config.mock_mode:
         logger.info("🎭 Running in MOCK MODE - using dummy data")
         ai_client = MockAIClient(config.ai_service_url, config.user_uuid)
     else:
         ai_client = AIServiceClient(config.ai_service_url, config.user_uuid)
     
-    # Verify AI service is available (skip health check in mock mode)
+    # AI 서비스 사용 가능 여부 확인 (mock 모드에서는 건너뛰기)
     if not config.mock_mode:
         healthy = await ai_client.health_check()
         if not healthy:
             logger.error("AI Service is not available")
             raise Exception("AI Service connection failed")
     
-    # Initialize camera
+    # 카메라 초기화
     logger.info(f"Opening camera at index {config.camera_index}...")
     camera = cv2.VideoCapture(config.camera_index)
     
     if not camera.isOpened():
         logger.error(f"❌ Failed to open camera at index {config.camera_index}")
         logger.info("Try changing camera_index in config.json (0, 1, or 2)")
-        # Don't raise exception - allow server to start for debugging
+        # 예외 발생시키지 않음 - 디버깅을 위해 서버 시작 허용
     else:
         logger.info(f"✅ Camera opened successfully at index {config.camera_index}")
     
-    # Initialize gaze tracker with proper parameters
-    # click_mode='both' enables both dwell-time and blink detection
+    # 시선 추적기 초기화
+    # click_mode='both'는 응시(dwell)와 깜빡임(blink) 감지 모두 활성화
     gaze_tracker = GazeTracker(
         screen_width=config.screen_width,
         screen_height=config.screen_height,
         dwell_time=config.dwell_time,
         camera_index=config.camera_index,
-        click_mode='both'  # Always enable both click methods
+        click_mode='both'  # 항상 두 가지 클릭 방식 모두 활성화
     )
     
-    # Load initial devices
+    # 초기 디바이스 로드
     await refresh_devices()
     
     logger.info(f"✅ Services initialized successfully ({len(devices_cache)} devices loaded)")
@@ -157,12 +157,12 @@ async def initialize_services():
 
 
 async def on_device_click(device_id: str, action: str, position: tuple):
-    """Handle device click event"""
+    """디바이스 클릭 이벤트 처리"""
     global current_recommendation
     
     logger.info(f"Device clicked: {device_id} - {action} at {position}")
     
-    # Find device info from cache
+    # 캐시에서 디바이스 정보 찾기
     device_info = None
     for device in devices_cache:
         if device.get('device_id') == device_id:
@@ -173,7 +173,7 @@ async def on_device_click(device_id: str, action: str, position: tuple):
         logger.warning(f"Device {device_id} not found in cache")
         return
     
-    # Send to AI service for recommendation
+    # AI 서비스에 전송하여 추천 받기
     try:
         result = await ai_client.send_device_click(
             device_info=device_info,
@@ -191,20 +191,20 @@ async def on_device_click(device_id: str, action: str, position: tuple):
 
 
 async def refresh_devices():
-    """Refresh device list and update AOIs via AI Service"""
+    """디바이스 목록 새로고침 및 AOI 업데이트 (AI Service를 통해)"""
     global devices_cache
     
     try:
-        # Get devices from AI Service (which communicates with Gateway)
+        # AI Service를 통해 디바이스 가져오기 (Gateway와 통신)
         devices = await ai_client.get_devices()
         
         if devices:
             devices_cache = devices
             
-            # Update AOIs in gaze tracker
+            # 시선 추적기의 AOI 업데이트
             gaze_tracker.clear_aois()
             
-            # Create grid layout for devices (example: 3 columns)
+            # 디바이스를 위한 그리드 레이아웃 생성 (예: 3열)
             cols = 3
             card_width = config.screen_width // cols
             card_height = 200
@@ -229,7 +229,7 @@ async def refresh_devices():
 
 
 async def device_polling_task():
-    """Background task to poll device status"""
+    """디바이스 상태를 주기적으로 폴링하는 백그라운드 작업"""
     while True:
         try:
             await refresh_devices()
@@ -240,7 +240,7 @@ async def device_polling_task():
 
 
 async def recommendation_polling_task():
-    """Background task to poll for recommendations"""
+    """추천을 주기적으로 폴링하는 백그라운드 작업"""
     global current_recommendation
     
     while True:
@@ -257,7 +257,7 @@ async def recommendation_polling_task():
 
 
 def generate_frames():
-    """Generate video frames with gaze overlay"""
+    """시선 오버레이가 있는 비디오 프레임 생성"""
     global camera, gaze_tracker
     
     while True:
@@ -269,21 +269,21 @@ def generate_frames():
             logger.warning("Failed to read frame")
             break
         
-        # Update gaze tracking
+        # 시선 추적 업데이트
         if gaze_tracker:
             result = gaze_tracker.update(frame)
             
-            # Draw gaze pointer
+            # 시선 포인터 그리기
             if result.get('gaze_position'):
                 x, y = result['gaze_position']
                 cv2.circle(frame, (x, y), 15, (0, 255, 0), 2)
                 
-                # Draw dwell progress
+                # 응시 진행률 그리기
                 if result.get('dwell_progress', 0) > 0:
                     radius = int(15 + 20 * result['dwell_progress'])
                     cv2.circle(frame, (x, y), radius, (255, 0, 0), 2)
         
-        # Encode frame to JPEG
+        # 프레임을 JPEG로 인코딩
         ret, buffer = cv2.imencode('.jpg', frame)
         frame_bytes = buffer.tobytes()
         
@@ -293,7 +293,7 @@ def generate_frames():
 
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
-    """Main page"""
+    """메인 페이지"""
     return templates.TemplateResponse("index.html", {
         "request": request,
         "screen_width": config.screen_width,
@@ -303,7 +303,7 @@ async def index(request: Request):
 
 @app.get("/video_feed")
 async def video_feed():
-    """Video streaming endpoint"""
+    """비디오 스트리밍 엔드포인트"""
     return StreamingResponse(
         generate_frames(),
         media_type="multipart/x-mixed-replace; boundary=frame"
@@ -312,7 +312,7 @@ async def video_feed():
 
 @app.get("/api/state")
 async def get_state():
-    """Get current application state"""
+    """현재 애플리케이션 상태 조회"""
     return JSONResponse({
         'calibrated': gaze_tracker.is_calibrated() if gaze_tracker else False,
         'devices': devices_cache,
@@ -323,7 +323,7 @@ async def get_state():
 
 @app.post("/api/calibration/start")
 async def start_calibration():
-    """Start calibration process"""
+    """캘리브레이션 프로세스 시작"""
     if gaze_tracker:
         gaze_tracker.start_calibration()
         return JSONResponse({'status': 'started'})
@@ -332,7 +332,7 @@ async def start_calibration():
 
 @app.get("/api/calibration/progress")
 async def get_calibration_progress():
-    """Get calibration progress"""
+    """캘리브레이션 진행 상태 조회"""
     if gaze_tracker:
         return JSONResponse(gaze_tracker.get_calibration_progress())
     return JSONResponse({'error': 'Gaze tracker not initialized'})
@@ -340,7 +340,7 @@ async def get_calibration_progress():
 
 @app.post("/api/calibration/sample")
 async def add_calibration_sample():
-    """Add calibration sample"""
+    """캘리브레이션 샘플 추가"""
     if gaze_tracker:
         ready = gaze_tracker.add_calibration_sample()
         return JSONResponse({'ready': ready})
@@ -349,12 +349,12 @@ async def add_calibration_sample():
 
 @app.post("/api/calibration/next")
 async def next_calibration_target():
-    """Move to next calibration target"""
+    """다음 캘리브레이션 타겟으로 이동"""
     if gaze_tracker:
         complete = gaze_tracker.next_calibration_target()
         
         if complete:
-            # Save calibration
+            # 캘리브레이션 저장
             gaze_tracker.save_calibration(config.calibration_file)
         
         return JSONResponse({'complete': complete})
@@ -363,7 +363,7 @@ async def next_calibration_target():
 
 @app.post("/api/dwell-time")
 async def update_dwell_time(request: Request):
-    """Update dwell-time for click detection"""
+    """클릭 감지를 위한 응시 시간(dwell-time) 업데이트"""
     data = await request.json()
     dwell_time = data.get('dwell_time', 0.8)
     
@@ -377,7 +377,7 @@ async def update_dwell_time(request: Request):
 
 @app.post("/api/click-mode")
 async def update_click_mode(request: Request):
-    """Update click detection mode (dwell, blink, or both)"""
+    """클릭 감지 모드 업데이트 (dwell, blink, 또는 both)"""
     data = await request.json()
     click_mode = data.get('click_mode', 'dwell')
     
@@ -394,22 +394,22 @@ async def update_click_mode(request: Request):
 
 @app.post("/api/devices/refresh")
 async def refresh_devices_endpoint():
-    """Manually refresh device list"""
+    """디바이스 목록 수동 새로고침"""
     await refresh_devices()
     return JSONResponse({'status': 'refreshed', 'count': len(devices_cache)})
 
 
 @app.post("/api/devices/{device_id}/control")
 async def control_device(device_id: str, request: Request):
-    """Control a device via AI Service"""
+    """AI Service를 통한 디바이스 제어"""
     data = await request.json()
     action = data.get('action', 'toggle')
     parameters = data.get('parameters')
     
-    # Send control request to AI Service (which forwards to Gateway)
+    # AI Service에 제어 요청 전송 (Gateway로 전달됨)
     result = await ai_client.control_device(device_id, action, parameters)
     
-    # Refresh devices to get updated state
+    # 업데이트된 상태를 가져오기 위해 디바이스 새로고침
     await refresh_devices()
     
     return JSONResponse(result or {'error': 'Control failed'})
@@ -417,7 +417,7 @@ async def control_device(device_id: str, request: Request):
 
 @app.post("/api/recommendation/respond")
 async def respond_to_recommendation(request: Request):
-    """Respond to a recommendation"""
+    """추천에 대한 응답 처리"""
     global current_recommendation
     
     data = await request.json()
@@ -429,10 +429,10 @@ async def respond_to_recommendation(request: Request):
     rec_id = current_recommendation.get('recommendation_id', 'unknown')
     device_id = current_recommendation.get('device_id')
     
-    # Send response to AI service
+    # AI 서비스에 응답 전송
     result = await ai_client.respond_to_recommendation(rec_id, answer, device_id)
     
-    # If YES, execute the action via AI Service
+    # YES인 경우 AI Service를 통해 액션 실행
     if answer.upper() == 'YES' and 'action' in current_recommendation:
         action_data = current_recommendation['action']
         device_id = action_data.get('device_id')
@@ -440,11 +440,11 @@ async def respond_to_recommendation(request: Request):
         parameters = action_data.get('parameters')
         
         if device_id and command:
-            # AI Service will forward the control command to Gateway
+            # AI Service가 Gateway로 제어 명령 전달
             await ai_client.control_device(device_id, command, parameters)
             await refresh_devices()
     
-    # Clear recommendation
+    # 추천 정보 초기화
     current_recommendation = None
     
     return JSONResponse(result or {'status': 'ok'})
@@ -452,7 +452,7 @@ async def respond_to_recommendation(request: Request):
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
-    """WebSocket for real-time updates"""
+    """실시간 업데이트를 위한 WebSocket"""
     await websocket.accept()
     logger.info("WebSocket connection opened")
     
@@ -462,12 +462,12 @@ async def websocket_endpoint(websocket: WebSocket):
         while True:
             frame_count += 1
             
-            # Log camera status periodically
+            # 주기적으로 카메라 상태 로깅
             if frame_count % 100 == 0:
                 camera_status = "OPEN" if (camera and camera.isOpened()) else "CLOSED"
                 logger.info(f"WebSocket frame {frame_count}: Camera={camera_status}, GazeTracker={'OK' if gaze_tracker else 'None'}")
             
-            # Get latest frame and gaze data
+            # 최신 프레임 및 시선 데이터 가져오기
             if camera is not None and camera.isOpened() and gaze_tracker:
                 ret, frame = camera.read()
                 if not ret:
@@ -476,14 +476,14 @@ async def websocket_endpoint(websocket: WebSocket):
                     await asyncio.sleep(0.05)
                     continue
                 
-                # Update gaze tracking
+                # 시선 추적 업데이트
                 result = gaze_tracker.update(frame)
                 
-                # Log result periodically for debugging
+                # 디버깅을 위해 주기적으로 결과 로깅
                 if frame_count % 100 == 0:
                     logger.info(f"Gaze result: position={result.get('gaze_position')}, pupils_detected={result.get('pupils_detected')}")
                 
-                # Send gaze position
+                # 시선 위치 전송
                 if result.get('gaze_position'):
                     await websocket.send_json({
                         'type': 'gaze',
@@ -493,7 +493,7 @@ async def websocket_endpoint(websocket: WebSocket):
                         }
                     })
                 
-                # Send dwell progress
+                # 응시 진행률 전송
                 if result.get('dwell_progress', 0) > 0:
                     await websocket.send_json({
                         'type': 'dwell',
@@ -504,7 +504,7 @@ async def websocket_endpoint(websocket: WebSocket):
                         } if result.get('gaze_position') else None
                     })
                 
-                # Send click event
+                # 클릭 이벤트 전송
                 if result.get('click_detected'):
                     clicked_device = result.get('clicked_device')
                     await websocket.send_json({
@@ -515,11 +515,11 @@ async def websocket_endpoint(websocket: WebSocket):
                         'position': clicked_device.get('position') if clicked_device else None
                     })
             else:
-                # Camera not ready - log warning
+                # 카메라가 준비되지 않음 - 경고 로깅
                 if frame_count == 1:
                     logger.warning(f"Camera not ready: camera={'None' if camera is None else ('Open' if camera.isOpened() else 'Closed')}, gaze_tracker={'None' if gaze_tracker is None else 'OK'}")
             
-            # Send state updates
+            # 상태 업데이트 전송
             state = {
                 'type': 'state',
                 'devices': devices_cache,
@@ -528,7 +528,7 @@ async def websocket_endpoint(websocket: WebSocket):
             }
             
             await websocket.send_json(state)
-            await asyncio.sleep(0.05)  # 20 FPS for smooth tracking
+            await asyncio.sleep(0.05)  # 부드러운 추적을 위해 20 FPS
     
     except WebSocketDisconnect:
         logger.info("WebSocket disconnected")

@@ -1,6 +1,6 @@
 """
-5-Point Gaze Calibration System
-Implements calibration using 5 target points with affine transformation
+5포인트 시선 캘리브레이션 시스템
+어파인 변환(affine transformation)을 사용한 5개 타겟 포인트 캘리브레이션 구현
 """
 import json
 import numpy as np
@@ -13,47 +13,47 @@ logger = logging.getLogger(__name__)
 
 class GazeCalibrator:
     """
-    5-point gaze calibration with affine transformation
+    어파인 변환을 이용한 5포인트 시선 캘리브레이션
     
-    Calibration points:
-    - Top-left (0.1, 0.1)
-    - Top-right (0.9, 0.1)
-    - Center (0.5, 0.5)
-    - Bottom-left (0.1, 0.9)
-    - Bottom-right (0.9, 0.9)
+    캘리브레이션 포인트:
+    - 왼쪽 상단 (0.1, 0.1)
+    - 오른쪽 상단 (0.9, 0.1)
+    - 중앙 (0.5, 0.5)
+    - 왼쪽 하단 (0.1, 0.9)
+    - 오른쪽 하단 (0.9, 0.9)
     """
     
     def __init__(self, screen_width: int, screen_height: int):
         self.screen_width = screen_width
         self.screen_height = screen_height
         
-        # 5 calibration target positions (normalized coordinates 0-1)
+        # 5개의 캘리브레이션 타겟 위치 (정규화된 좌표 0-1)
         self.target_positions = [
-            (0.1, 0.1),   # Top-left
-            (0.9, 0.1),   # Top-right
-            (0.5, 0.5),   # Center
-            (0.1, 0.9),   # Bottom-left
-            (0.9, 0.9),   # Bottom-right
+            (0.1, 0.1),   # 왼쪽 상단
+            (0.9, 0.1),   # 오른쪽 상단
+            (0.5, 0.5),   # 중앙
+            (0.1, 0.9),   # 왼쪽 하단
+            (0.9, 0.9),   # 오른쪽 하단
         ]
         
-        # Collected samples for each target
+        # 각 타겟에 대해 수집된 샘플
         self.samples: Dict[int, List[Tuple[float, float]]] = {i: [] for i in range(5)}
         
-        # Calibration parameters (affine transformation matrix)
+        # 캘리브레이션 파라미터 (어파인 변환 행렬)
         self.calibration_matrix: Optional[np.ndarray] = None
         self.translation_vector: Optional[np.ndarray] = None
         
-        # Calibration state
+        # 캘리브레이션 상태
         self.current_target_index = 0
         self.is_calibrated = False
         
-        # Sample collection parameters
+        # 샘플 수집 파라미터
         self.min_samples_per_target = 30
         self.max_samples_per_target = 50
-        self.stability_threshold = 0.05  # Maximum std deviation for stable samples
+        self.stability_threshold = 0.05  # 안정적인 샘플의 최대 표준편차
     
     def get_current_target_position(self) -> Tuple[int, int]:
-        """Get current calibration target position in screen coordinates"""
+        """화면 좌표에서 현재 캘리브레이션 타겟 위치 가져오기"""
         if self.current_target_index >= len(self.target_positions):
             return (0, 0)
         
@@ -64,21 +64,21 @@ class GazeCalibrator:
     
     def add_sample(self, gaze_x: float, gaze_y: float) -> bool:
         """
-        Add a gaze sample for the current target
+        현재 타겟에 대한 시선 샘플 추가
         
         Args:
-            gaze_x: Horizontal gaze ratio (0.0 - 1.0)
-            gaze_y: Vertical gaze ratio (0.0 - 1.0)
+            gaze_x: 수평 시선 비율 (0.0 - 1.0)
+            gaze_y: 수직 시선 비율 (0.0 - 1.0)
             
         Returns:
-            True if enough samples collected for current target
+            현재 타겟에 충분한 샘플이 수집된 경우 True
         """
         if self.current_target_index >= len(self.target_positions):
             return False
         
         self.samples[self.current_target_index].append((gaze_x, gaze_y))
         
-        # Check if we have enough samples
+        # 충분한 샘플이 수집되었는지 확인
         if len(self.samples[self.current_target_index]) >= self.min_samples_per_target:
             return True
         
@@ -193,21 +193,21 @@ class GazeCalibrator:
             Calibrated (screen_x, screen_y) in normalized coordinates (0.0 - 1.0)
         """
         if not self.is_calibrated:
-            # No calibration, return raw values
+            # 캘리브레이션 없음, 원시 값 반환
             return (gaze_x, gaze_y)
         
-        # Apply affine transformation
+        # 어파인 변환 적용
         gaze_vector = np.array([gaze_x, gaze_y], dtype=np.float32)
         screen_vector = self.calibration_matrix @ gaze_vector + self.translation_vector
         
-        # Clamp to [0, 1] range
+        # [0, 1] 범위로 제한
         screen_x = np.clip(screen_vector[0], 0.0, 1.0)
         screen_y = np.clip(screen_vector[1], 0.0, 1.0)
         
         return (float(screen_x), float(screen_y))
     
     def save_calibration(self, filepath: Path):
-        """Save calibration parameters to file"""
+        """캘리브레이션 파라미터를 파일에 저장"""
         if not self.is_calibrated:
             logger.warning("No calibration to save")
             return
@@ -228,16 +228,16 @@ class GazeCalibrator:
     
     def load_calibration(self, filepath: Path) -> bool:
         """
-        Load calibration parameters from file
+        파일에서 캘리브레이션 파라미터 로드
         
         Returns:
-            True if successfully loaded
+            성공적으로 로드된 경우 True
         """
         try:
             with open(filepath, 'r', encoding='utf-8') as f:
                 data = json.load(f)
             
-            # Verify screen dimensions match
+            # 화면 크기가 일치하는지 확인
             if (data['screen_width'] != self.screen_width or 
                 data['screen_height'] != self.screen_height):
                 logger.warning(
@@ -262,7 +262,7 @@ class GazeCalibrator:
             return False
     
     def reset(self):
-        """Reset calibration state"""
+        """캘리브레이션 상태 초기화"""
         self.samples = {i: [] for i in range(5)}
         self.current_target_index = 0
         self.is_calibrated = False
@@ -271,7 +271,7 @@ class GazeCalibrator:
         logger.info("Calibration reset")
     
     def get_progress(self) -> Dict:
-        """Get calibration progress information"""
+        """캘리브레이션 진행 정보 가져오기"""
         return {
             'current_target': self.current_target_index,
             'total_targets': len(self.target_positions),

@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 class AIServiceClient:
-    """Client for AI Service API"""
+    """AI 서비스 API 클라이언트"""
     
     def __init__(self, base_url: str, user_uuid: str):
         self.base_url = base_url.rstrip('/')
@@ -22,12 +22,12 @@ class AIServiceClient:
         logger.info(f"AIServiceClient initialized: {base_url}")
     
     async def __aenter__(self):
-        """Async context manager entry"""
+        """비동기 컨텍스트 매니저 진입"""
         self.session = aiohttp.ClientSession()
         return self
     
     async def __aexit__(self, exc_type, exc_val, exc_tb):
-        """Async context manager exit"""
+        """비동기 컨텍스트 매니저 종료"""
         if self.session:
             await self.session.close()
     
@@ -36,17 +36,17 @@ class AIServiceClient:
                       params: Optional[Dict] = None,
                       retries: int = 3) -> Optional[Dict]:
         """
-        Make HTTP request with retries
+        재시도를 포함한 HTTP 요청 수행
         
         Args:
-            method: HTTP method (GET, POST, etc.)
-            endpoint: API endpoint
-            json_data: JSON payload
-            params: Query parameters
-            retries: Number of retries
+            method: HTTP 메서드 (GET, POST 등)
+            endpoint: API 엔드포인트
+            json_data: JSON 페이로드
+            params: 쿼리 파라미터
+            retries: 재시도 횟수
             
         Returns:
-            Response data or None on error
+            응답 데이터 또는 에러 시 None
         """
         if not self.session:
             self.session = aiohttp.ClientSession()
@@ -79,14 +79,14 @@ class AIServiceClient:
     
     async def send_device_click(self, device_info: Dict, context: Optional[Dict] = None) -> Optional[Dict]:
         """
-        Send device click event to AI service for recommendation
+        디바이스 클릭 이벤트를 AI 서비스에 전송하여 추천 받기
         
         Args:
-            device_info: Clicked device information
-            context: Additional context
+            device_info: 클릭된 디바이스 정보
+            context: 추가 컨텍스트
             
         Returns:
-            Recommendation from AI service
+            AI 서비스로부터의 추천
         """
         payload = {
             'user_id': self.user_uuid,
@@ -100,7 +100,7 @@ class AIServiceClient:
         
         if result and 'recommendation' in result:
             self.current_recommendation = result['recommendation']
-            # Add recommendation_id from response if available
+            # 응답에서 사용 가능한 경우 recommendation_id 추가
             if 'recommendation_id' not in self.current_recommendation and 'session_id' in result:
                 self.current_recommendation['recommendation_id'] = result['session_id']
             
@@ -110,16 +110,16 @@ class AIServiceClient:
     
     async def poll_recommendation(self) -> Optional[Dict]:
         """
-        Poll for pending recommendations
+        대기 중인 추천 폴링
         
         Returns:
-            Recommendation if available
+            사용 가능한 경우 추천
         """
         params = {'user_uuid': self.user_uuid}
         result = await self._request('GET', '/v1/intent', params=params, retries=1)
         
         if result and result.get('status') == 'success':
-            # Check if there's a pending recommendation
+            # 대기 중인 추천이 있는지 확인
             if 'recommendation' in result:
                 self.current_recommendation = result['recommendation']
                 logger.info(f"Polled recommendation: {self.current_recommendation.get('message', '')[:50]}...")
@@ -130,15 +130,15 @@ class AIServiceClient:
     async def respond_to_recommendation(self, recommendation_id: str, answer: str, 
                                        device_id: Optional[str] = None) -> Optional[Dict]:
         """
-        Send YES/NO response to a recommendation
+        추천에 대한 YES/NO 응답 전송
         
         Args:
-            recommendation_id: ID of the recommendation
-            answer: "YES" or "NO"
-            device_id: Device ID (if applicable)
+            recommendation_id: 추천 ID
+            answer: "YES" 또는 "NO"
+            device_id: 디바이스 ID (해당되는 경우)
             
         Returns:
-            Response result
+            응답 결과
         """
         payload = {
             'user_uuid': self.user_uuid,
@@ -153,7 +153,7 @@ class AIServiceClient:
         
         logger.info(f"Recommendation response: {answer} - {result}")
         
-        # Clear current recommendation after responding
+        # 응답 후 현재 추천 초기화
         if answer.upper() == "YES" or answer.upper() == "NO":
             self.current_recommendation = None
         
@@ -161,19 +161,19 @@ class AIServiceClient:
     
     async def get_current_recommendation(self) -> Optional[Dict]:
         """
-        Get the current pending recommendation
+        현재 대기 중인 추천 가져오기
         
         Returns:
-            Current recommendation or None
+            현재 추천 또는 None
         """
         return self.current_recommendation
     
     async def health_check(self) -> bool:
         """
-        Check if AI service is healthy
+        AI 서비스 상태 확인
         
         Returns:
-            True if server is responding
+            서버가 응답하면 True
         """
         try:
             result = await self._request('GET', '/api/gaze/status', retries=1)
@@ -183,10 +183,10 @@ class AIServiceClient:
     
     async def get_devices(self) -> Optional[List[Dict]]:
         """
-        Get device list from AI Service (which queries Gateway)
+        AI 서비스로부터 디바이스 목록 가져오기 (Gateway에 쿼리)
         
         Returns:
-            List of devices or None
+            디바이스 목록 또는 None
         """
         result = await self._request('GET', '/api/devices', params={'user_id': self.user_uuid})
         
@@ -198,15 +198,15 @@ class AIServiceClient:
     async def control_device(self, device_id: str, action: str, 
                            parameters: Optional[Dict] = None) -> Optional[Dict]:
         """
-        Send device control command via AI Service (which forwards to Gateway)
+        AI 서비스를 통해 디바이스 제어 명령 전송 (Gateway로 전달)
         
         Args:
-            device_id: Device ID
-            action: Action to perform
-            parameters: Additional parameters
+            device_id: 디바이스 ID
+            action: 수행할 액션
+            parameters: 추가 파라미터
             
         Returns:
-            Control result
+            제어 결과
         """
         payload = {
             'user_id': self.user_uuid,
