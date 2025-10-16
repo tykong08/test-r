@@ -10,7 +10,8 @@
         "camera_index": 0,
         "camera_width": 1280,
         "camera_height": 720,
-        "camera_fps": 30
+        "camera_fps": 30,
+        "smoothing_window": 7
     },
     "polling": {
         "device_status_interval": 5.0,

@@ -67,7 +67,14 @@ class AOI:
 class DwellClickDetector:
     """응시 시간(fixation duration) 기반 클릭 감지"""
     
-    def __init__(self, dwell_time: float = 0.8, tolerance: int = 30):
+    def __init__(self, dwell_time: float = 0.8, tolerance: int = 50):
+        """
+        Args:
+            dwell_time: 클릭으로 인정되는 응시 시간 (초)
+            tolerance: 응시 중 허용되는 이동 거리 (픽셀)
+                      - 기존 30 → 50으로 증가하여 포인터 흔들림에 더 관대하게
+                      - 7인치 화면(800x480)에서 약 6% 이동 허용
+        """
         self.dwell_time = dwell_time  # 초 단위
         self.tolerance = tolerance     # 픽셀
         
@@ -199,11 +206,12 @@ class BlinkClickDetector:
 class GazeTracker:
     """
     캘리브레이션 및 클릭 감지 기능을 포함한 메인 시선 추적기
+    포인터 안정화를 위한 이동 평균 필터 포함
     """
     
     def __init__(self, screen_width: int, screen_height: int, 
                  dwell_time: float = 0.8, camera_index: int = 0, 
-                 click_mode: str = 'dwell'):
+                 click_mode: str = 'dwell', smoothing_window: int = 5):
         self.screen_width = screen_width
         self.screen_height = screen_height
         
@@ -232,7 +240,11 @@ class GazeTracker:
         # 카메라
         self.camera_index = camera_index
         
-        logger.info(f"GazeTracker initialized: {screen_width}x{screen_height}")
+        # 포인터 안정화를 위한 이동 평균 필터
+        self.smoothing_window = smoothing_window
+        self.position_history: List[Tuple[int, int]] = []
+        
+        logger.info(f"GazeTracker initialized: {screen_width}x{screen_height}, smoothing={smoothing_window}")
     
     def add_aoi(self, x: int, y: int, width: int, height: int, 
                 device_id: str, action: str = "toggle"):
@@ -267,7 +279,7 @@ class GazeTracker:
     
     def get_calibrated_gaze_position(self) -> Optional[Tuple[int, int]]:
         """
-        화면 좌표에서 보정된 시선 위치 가져오기
+        화면 좌표에서 보정된 시선 위치 가져오기 (이동 평균 필터 적용)
         
         Returns:
             (screen_x, screen_y) 또는 사용 불가 시 None
@@ -292,7 +304,18 @@ class GazeTracker:
         screen_x = max(0, min(screen_x, self.screen_width - 1))
         screen_y = max(0, min(screen_y, self.screen_height - 1))
         
-        logger.debug(f"Screen position: ({screen_x}, {screen_y}) / ({self.screen_width}, {self.screen_height})")
+        # 이동 평균 필터 적용하여 포인터 안정화
+        self.position_history.append((screen_x, screen_y))
+        if len(self.position_history) > self.smoothing_window:
+            self.position_history.pop(0)
+        
+        # 평균 계산
+        if len(self.position_history) > 0:
+            avg_x = int(sum(pos[0] for pos in self.position_history) / len(self.position_history))
+            avg_y = int(sum(pos[1] for pos in self.position_history) / len(self.position_history))
+            screen_x, screen_y = avg_x, avg_y
+        
+        logger.debug(f"Screen position (smoothed): ({screen_x}, {screen_y}) / ({self.screen_width}, {self.screen_height})")
         
         return (screen_x, screen_y)
     

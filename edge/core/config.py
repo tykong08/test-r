@@ -96,6 +96,11 @@ class Config:
         return self.config.get("gaze", {}).get("camera_fps", 30)
     
     @property
+    def smoothing_window(self) -> int:
+        """포인터 안정화를 위한 이동 평균 윈도우 크기 가져오기 (기본값: 5)"""
+        return self.config.get("gaze", {}).get("smoothing_window", 5)
+    
+    @property
     def calibration_file(self) -> Path:
         """캘리브레이션 파일 경로 가져오기"""
         filename = self.config.get("calibration_file", "calibration_params.json")

@@ -8,6 +8,11 @@ let gazeCtx = null;
 let calibrationCanvas = null;
 let calibrationCtx = null;
 
+// 시선 호버 추적 변수
+let currentHoveredElement = null;
+let hoverStartTime = null;
+const HOVER_THRESHOLD = 0.3; // 0.3초 이상 호버 시 이펙트
+
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
     console.log('GazeHome Edge Device initialized');
@@ -382,6 +387,8 @@ function updateGazePointer(data) {
         if (calibrationCtx && calibrationCanvas) {
             calibrationCtx.clearRect(0, 0, calibrationCanvas.width, calibrationCanvas.height);
         }
+        // 호버 상태 초기화
+        clearHoverEffects();
         return;
     }
 
@@ -391,6 +398,9 @@ function updateGazePointer(data) {
     pointer.style.left = `${x}px`;
     pointer.style.top = `${y}px`;
     pointer.classList.add('active');
+
+    // 시선 호버 감지 (버튼, 디바이스 카드)
+    checkGazeHover(x, y);
 
     // 보정 화면 Canvas에 시선 포인터 그리기 (캘리브레이션 중일 때만)
     if (calibrationInProgress && calibrationCtx && calibrationCanvas) {
@@ -481,8 +491,19 @@ function handleGazeClick(data) {
         pointer.style.transform = 'translate(-50%, -50%) scale(1)';
     }, 300);
 
-    // 시각적 피드백 2: 클릭 효과 표시
+    // 시각적 피드백 2: 클릭 효과 표시 (3개 레이어)
     showClickEffect(data.position);
+
+    // 호버 이펙트 초기화 (클릭된 요소)
+    if (currentHoveredElement) {
+        // 클릭된 요소에 추가 애니메이션
+        currentHoveredElement.classList.add('clicked-element');
+        setTimeout(() => {
+            if (currentHoveredElement) {
+                currentHoveredElement.classList.remove('clicked-element');
+            }
+        }, 500);
+    }
 
     // 기기 클릭된 경우
     if (data.device_id) {
@@ -498,22 +519,33 @@ function handleGazeClick(data) {
     }
 }
 
-// 클릭 효과 표시 (ripple effect)
+// 클릭 효과 표시 (3개 레이어 ripple effect)
 function showClickEffect(position) {
     if (!position) return;
 
+    // 레이어 1: 작고 빠른 ripple
+    createRipple(position, 20, 3, '#48bb78', 0.6);
+
+    // 레이어 2: 중간 크기 ripple
+    setTimeout(() => createRipple(position, 40, 2.5, '#4fd1c5', 0.7), 50);
+
+    // 레이어 3: 크고 느린 ripple
+    setTimeout(() => createRipple(position, 60, 2, '#667eea', 0.8), 100);
+}
+
+function createRipple(position, startSize, borderWidth, color, duration) {
     const effect = document.createElement('div');
     effect.style.position = 'fixed';
     effect.style.left = `${position.x || 0}px`;
     effect.style.top = `${position.y || 0}px`;
-    effect.style.width = '20px';
-    effect.style.height = '20px';
+    effect.style.width = `${startSize}px`;
+    effect.style.height = `${startSize}px`;
     effect.style.borderRadius = '50%';
-    effect.style.border = '3px solid #48bb78';
+    effect.style.border = `${borderWidth}px solid ${color}`;
     effect.style.transform = 'translate(-50%, -50%)';
     effect.style.pointerEvents = 'none';
     effect.style.zIndex = '10000';
-    effect.style.animation = 'clickRipple 0.6s ease-out';
+    effect.style.animation = `clickRipple ${duration}s ease-out`;
 
     document.body.appendChild(effect);
 
@@ -608,11 +640,66 @@ async function refreshDevices() {
         const result = await response.json();
         console.log('Devices refreshed:', result);
 
+        // Refresh state
         await fetchState();
     } catch (error) {
         console.error('Error refreshing devices:', error);
     }
 }
+
+// ==================== 시선 호버 감지 시스템 ====================
+
+function checkGazeHover(x, y) {
+    // 클릭 가능한 요소들 찾기 (버튼, 디바이스 카드)
+    const interactiveElements = document.querySelectorAll('.btn, .device-card');
+
+    let hoveredElement = null;
+
+    // 어떤 요소 위에 시선이 있는지 확인
+    for (const element of interactiveElements) {
+        const rect = element.getBoundingClientRect();
+        if (x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) {
+            hoveredElement = element;
+            break;
+        }
+    }
+
+    // 호버 상태 변경
+    if (hoveredElement !== currentHoveredElement) {
+        // 이전 요소 호버 해제
+        if (currentHoveredElement) {
+            currentHoveredElement.classList.remove('gaze-hover');
+        }
+
+        // 새 요소 호버 시작
+        currentHoveredElement = hoveredElement;
+        hoverStartTime = hoveredElement ? Date.now() : null;
+
+        if (hoveredElement) {
+            // 즉시 가벼운 호버 이펙트
+            hoveredElement.classList.add('gaze-hover');
+        }
+    } else if (hoveredElement && hoverStartTime) {
+        // 같은 요소를 계속 보고 있는 경우
+        const hoverDuration = (Date.now() - hoverStartTime) / 1000;
+
+        // 0.3초 이상 호버 시 강한 이펙트
+        if (hoverDuration >= HOVER_THRESHOLD) {
+            hoveredElement.classList.add('gaze-hover-strong');
+        }
+    }
+}
+
+function clearHoverEffects() {
+    if (currentHoveredElement) {
+        currentHoveredElement.classList.remove('gaze-hover');
+        currentHoveredElement.classList.remove('gaze-hover-strong');
+    }
+    currentHoveredElement = null;
+    hoverStartTime = null;
+}
+
+// ==================== 유틸리티 ====================
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));

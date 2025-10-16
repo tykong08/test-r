@@ -152,12 +152,14 @@ async def initialize_services():
     
     # 시선 추적기 초기화
     # click_mode='both'는 응시(dwell)와 깜빡임(blink) 감지 모두 활성화
+    # smoothing_window로 포인터 안정화 (기본값: 5, 추천: 7-10)
     gaze_tracker = GazeTracker(
         screen_width=config.screen_width,
         screen_height=config.screen_height,
         dwell_time=config.dwell_time,
         camera_index=config.camera_index,
-        click_mode='both'  # 항상 두 가지 클릭 방식 모두 활성화
+        click_mode='both',  # 항상 두 가지 클릭 방식 모두 활성화
+        smoothing_window=config.smoothing_window  # 포인터 안정화 윈도우
     )
     
     # 초기 디바이스 로드

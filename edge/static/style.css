@@ -74,7 +74,7 @@ body {
 }
 
 /* Gaze Pointer - Full Screen (Softer, Eye-Friendly) */
-/* 7인치 화면용으로 약간 축소 */
+/* 7인치 화면용으로 약간 축소, 이동 평균 필터와 함께 부드러운 전환 */
 .gaze-pointer {
     position: fixed;
     width: 24px;
@@ -85,8 +85,13 @@ body {
     pointer-events: none;
     display: none;
     transform: translate(-50%, -50%);
-    transition: all 0.2s ease-out;
-    /* 7인치 화면에 맞춰 0.3s → 0.2s로 조정 (작은 화면에서 더 빠른 반응) */
+    transition: transform 0.15s ease-out,
+        left 0.15s ease-out,
+        top 0.15s ease-out,
+        border 0.2s ease-out,
+        box-shadow 0.2s ease-out;
+    /* 위치 이동은 0.15s로 빠르게, 색상/그림자는 0.2s */
+    /* 이동 평균 필터와 함께 매우 부드러운 포인터 */
     z-index: 9999;
     box-shadow:
         0 0 12px rgba(79, 209, 197, 0.6),
@@ -262,6 +267,33 @@ body {
     cursor: pointer;
     transition: all 0.2s ease;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+/* 시선 호버 이펙트 - 가벼운 */
+.btn.gaze-hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+    border: 2px solid rgba(79, 209, 197, 0.5);
+}
+
+/* 시선 호버 이펙트 - 강한 (0.3초 이상) */
+.btn.gaze-hover-strong {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 6px 16px rgba(79, 209, 197, 0.4), 0 0 20px rgba(79, 209, 197, 0.3);
+    border: 2px solid rgba(79, 209, 197, 0.8);
+    animation: gaze-pulse-btn 1s ease-in-out infinite;
+}
+
+@keyframes gaze-pulse-btn {
+
+    0%,
+    100% {
+        box-shadow: 0 6px 16px rgba(79, 209, 197, 0.4), 0 0 20px rgba(79, 209, 197, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 6px 20px rgba(79, 209, 197, 0.6), 0 0 30px rgba(79, 209, 197, 0.5);
+    }
 }
 
 .btn-primary {
@@ -512,6 +544,32 @@ body {
     border-color: rgba(102, 126, 234, 0.3);
 }
 
+/* 시선 호버 이펙트 - 디바이스 카드 */
+.device-card.gaze-hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(79, 209, 197, 0.15);
+    border: 2px solid rgba(79, 209, 197, 0.5);
+}
+
+.device-card.gaze-hover-strong {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 10px 24px rgba(79, 209, 197, 0.3), 0 0 30px rgba(79, 209, 197, 0.2);
+    border: 2px solid rgba(79, 209, 197, 0.8);
+    animation: gaze-pulse-card 1.2s ease-in-out infinite;
+}
+
+@keyframes gaze-pulse-card {
+
+    0%,
+    100% {
+        box-shadow: 0 10px 24px rgba(79, 209, 197, 0.3), 0 0 30px rgba(79, 209, 197, 0.2);
+    }
+
+    50% {
+        box-shadow: 0 12px 28px rgba(79, 209, 197, 0.4), 0 0 40px rgba(79, 209, 197, 0.3);
+    }
+}
+
 .device-card h3 {
     font-size: 15px;
     /* 19px → 15px */
@@ -718,6 +776,29 @@ body {
         width: 80px;
         height: 80px;
         opacity: 0;
+    }
+}
+
+/* 클릭된 요소 애니메이션 */
+.clicked-element {
+    animation: clicked-flash 0.5s ease-out !important;
+}
+
+@keyframes clicked-flash {
+    0% {
+        background: rgba(72, 187, 120, 0.3);
+        transform: scale(1);
+    }
+
+    50% {
+        background: rgba(72, 187, 120, 0.5);
+        transform: scale(1.05);
+        box-shadow: 0 0 30px rgba(72, 187, 120, 0.6), 0 0 50px rgba(72, 187, 120, 0.4);
+    }
+
+    100% {
+        background: transparent;
+        transform: scale(1);
     }
 }
 
